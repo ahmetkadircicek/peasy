@@ -26,7 +26,7 @@ class _GeneralText extends StatelessWidget {
       textAlign: isCentred ? TextAlign.center : TextAlign.start,
       style: GoogleFonts.montserrat(
         fontSize: fontSize,
-        fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+        fontWeight: isBold ? FontWeight.w500 : FontWeight.normal,
         color: color,
       ),
       overflow: overflow ? TextOverflow.ellipsis : null,

@@ -1,3 +1,4 @@
+import 'package:peasy/features/category/viewmodel/category_view_model.dart';
 import 'package:peasy/features/home/viewmodel/home_view_model.dart';
 import 'package:peasy/features/main/viewmodel/main_view_model.dart';
 import 'package:peasy/features/splash/viewmodel/splash_view_model.dart';
@@ -17,5 +18,6 @@ class ProviderManager {
     ChangeNotifierProvider(create: (context) => SplashViewModel()),
     ChangeNotifierProvider(create: (context) => HomeViewModel()),
     ChangeNotifierProvider(create: (context) => MainViewModel()),
+    ChangeNotifierProvider(create: (context) => CategoryViewModel()),
   ];
 }
