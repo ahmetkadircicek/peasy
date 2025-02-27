@@ -24,9 +24,9 @@ class GeneralConstants {
 
   final fontSizeExtraSmall = 10.0; // 12.0
   final fontSizeSmall = 12.0; // 16.0
-  final fontSizeMedium = 16.0; // 20.0
-  final fontSizeLarge = 22.0; // 24.0
-  final fontSizeExtraLarge = 26.0; // 28.0
+  final fontSizeMedium = 14.0; // 20.0
+  final fontSizeLarge = 18.0; // 24.0
+  final fontSizeExtraLarge = 24.0; // 28.0
 
   final fontWeightLight = FontWeight.w300; // w300
   final fontWeightRegular = FontWeight.w500; // w500

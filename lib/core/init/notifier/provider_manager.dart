@@ -1,4 +1,5 @@
 import 'package:peasy/features/home/viewmodel/home_view_model.dart';
+import 'package:peasy/features/main/viewmodel/main_view_model.dart';
 import 'package:peasy/features/splash/viewmodel/splash_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -15,5 +16,6 @@ class ProviderManager {
   List<SingleChildWidget> providers = [
     ChangeNotifierProvider(create: (context) => SplashViewModel()),
     ChangeNotifierProvider(create: (context) => HomeViewModel()),
+    ChangeNotifierProvider(create: (context) => MainViewModel()),
   ];
 }
