@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:peasy/core/constants/navigation/navigation_service.dart';
 import 'package:peasy/core/init/notifier/provider_manager.dart';
 import 'package:peasy/core/init/theme/app_theme.dart';
-import 'package:peasy/features/splash/view/splash_view.dart';
+import 'package:peasy/features/home/view/home_view.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
       title: 'Peasy',
       theme: LightTheme.theme,
       debugShowCheckedModeBanner: false,
-      home: const SplashView(),
+      home: const HomeView(),
       // localizationsDelegates: context.localizationDelegates,
       // supportedLocales: context.supportedLocales,
       // locale: context.locale,
