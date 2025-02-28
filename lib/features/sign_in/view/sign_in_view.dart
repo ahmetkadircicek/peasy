@@ -4,21 +4,19 @@ import 'package:peasy/core/components/divider.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/constants/navigation/navigation_service.dart';
 import 'package:peasy/core/widgets/auth_button.dart';
+import 'package:peasy/core/widgets/custom_text_field.dart';
 import 'package:peasy/core/widgets/main_button.dart';
-import 'package:peasy/features/sign_in/view/sign_in_view.dart';
+import 'package:peasy/features/forget_password/view/forget_password.dart';
+import 'package:peasy/features/sign_up/view/sign_up_view.dart';
 
-import '../../../core/widgets/custom_text_field.dart';
-
-class SignUpView extends StatefulWidget {
-  const SignUpView({super.key});
+class SignInView extends StatefulWidget {
+  const SignInView({super.key});
 
   @override
-  State<SignUpView> createState() => _SignUpViewState();
+  State<SignInView> createState() => _SignInViewState();
 }
 
-class _SignUpViewState extends State<SignUpView> {
-  bool isChecked = false;
-
+class _SignInViewState extends State<SignInView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +28,7 @@ class _SignUpViewState extends State<SignUpView> {
               spacing: 16,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Claps Image
+                // Wave Image
                 Container(
                   width: 90,
                   height: 90,
@@ -38,18 +36,18 @@ class _SignUpViewState extends State<SignUpView> {
                     color: Theme.of(context).colorScheme.tertiary,
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: Image.asset('assets/images/claps.png'),
+                  child: Image.asset('assets/images/wave.png'),
                 ),
-                // Sign Up Text
+                // Sign In Text
                 Text(
-                  'Sign Up',
+                  'Sign In',
                   style: GoogleFonts.montserrat(
                     fontSize: 32,
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                // Sign Up Description
+                // Sign In Description
                 Text(
                   'It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum',
                   textAlign: TextAlign.center,
@@ -59,7 +57,7 @@ class _SignUpViewState extends State<SignUpView> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                // Sign up with Google and Facebook
+                // Sign In with Google and Facebook
                 Padding(
                   padding: PaddingConstants.symmetricVerticalSmall,
                   child: Row(
@@ -80,51 +78,34 @@ class _SignUpViewState extends State<SignUpView> {
                 // Divider
                 GeneralDivider(text: "or"),
                 // Text Field
-                CustomTextField(hintText: "Name"),
                 CustomTextField(hintText: "Email"),
                 CustomTextField(hintText: "Password", obscureText: true),
-
-                // Terms and Conditions
-                Row(
-                  spacing: 8,
-                  children: [
-                    SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: Checkbox(
-                        value: isChecked,
-                        onChanged: (value) {
-                          setState(() {
-                            isChecked = value ?? false;
-                          });
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        side: BorderSide(color: Colors.grey),
-                        activeColor: Theme.of(context).colorScheme.primary,
-                        checkColor: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      "I agree to the Terms of Service and Privacy Policy",
+                // Forgot Password
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      NavigationService.instance.navigateTo(
+                        const ForgetPassword(),
+                      );
+                    },
+                    child: Text(
+                      "Forgot Password?",
                       style: GoogleFonts.montserrat(
                         fontSize: 12,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-                // Create an account button
-                MainButton(
-                  text: "Create an account",
-                  onPressed: () {},
-                ),
-                // Already have an account?
+                // Sign In Button
+                MainButton(text: "Sign In", onPressed: () {}),
+                // Don't have an account?
                 Row(
                   spacing: 5,
                   children: [
                     Text(
-                      "Do you have an account?",
+                      "Don't have an account?",
                       style: GoogleFonts.montserrat(
                         fontSize: 12,
                       ),
@@ -136,11 +117,11 @@ class _SignUpViewState extends State<SignUpView> {
                       child: GestureDetector(
                         onTap: () {
                           NavigationService.instance.navigateTo(
-                            const SignInView(),
+                            const SignUpView(),
                           );
                         },
                         child: Text(
-                          "Sign ",
+                          "Sign Up",
                           style: GoogleFonts.montserrat(
                             color: Theme.of(context).colorScheme.primary,
                             fontSize: 12,
