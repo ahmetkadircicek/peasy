@@ -16,7 +16,7 @@ class GeneralDivider extends StatelessWidget {
       children: [
         _buildDivider(context, 1),
         if (text != null) _buildText(context),
-        _buildDivider(context, 9),
+        _buildDivider(context, 1),
       ],
     );
   }

@@ -31,130 +31,154 @@ class _SignUpViewState extends State<SignUpView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Claps Image
-                Container(
-                  width: 90,
-                  height: 90,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.tertiary,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Image.asset('assets/images/claps.png'),
-                ),
+                _clapsImage(context),
                 // Sign Up Text
-                Text(
-                  'Sign Up',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
+                _signUpText(context),
                 // Sign Up Description
-                Text(
-                  'It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
+                _signUpDescription(context),
                 // Sign up with Google and Facebook
-                Padding(
-                  padding: PaddingConstants.symmetricVerticalSmall,
-                  child: Row(
-                    spacing: 16,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AuthButton(
-                        title: "Google",
-                        imagePath: "assets/images/google.png",
-                      ),
-                      AuthButton(
-                        title: "Facebook",
-                        imagePath: "assets/images/facebook.png",
-                      ),
-                    ],
-                  ),
-                ),
+                _signUpWith(),
                 // Divider
                 GeneralDivider(text: "or"),
                 // Text Field
                 CustomTextField(hintText: "Name"),
                 CustomTextField(hintText: "Email"),
-                CustomTextField(hintText: "Password", obscureText: true),
+                CustomTextField(hintText: "Password", isPassword: true),
 
                 // Terms and Conditions
-                Row(
-                  spacing: 8,
-                  children: [
-                    SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: Checkbox(
-                        value: isChecked,
-                        onChanged: (value) {
-                          setState(() {
-                            isChecked = value ?? false;
-                          });
-                        },
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        side: BorderSide(color: Colors.grey),
-                        activeColor: Theme.of(context).colorScheme.primary,
-                        checkColor: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      "I agree to the Terms of Service and Privacy Policy",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
+                _termsAndConditions(context),
                 // Create an account button
                 MainButton(
                   text: "Create an account",
                   onPressed: () {},
                 ),
                 // Already have an account?
-                Row(
-                  spacing: 5,
-                  children: [
-                    Text(
-                      "Do you have an account?",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        print("Sign In");
-                      },
-                      child: GestureDetector(
-                        onTap: () {
-                          NavigationService.instance.navigateTo(
-                            const SignInView(),
-                          );
-                        },
-                        child: Text(
-                          "Sign ",
-                          style: GoogleFonts.montserrat(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                _alreadyHaveAccount(context),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _alreadyHaveAccount(BuildContext context) {
+    return Row(
+      spacing: 5,
+      children: [
+        Text(
+          "Do you have an account?",
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            print("Sign In");
+          },
+          child: GestureDetector(
+            onTap: () {
+              NavigationService.instance.navigateTo(
+                const SignInView(),
+              );
+            },
+            child: Text(
+              "Sign ",
+              style: GoogleFonts.montserrat(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _termsAndConditions(BuildContext context) {
+    return Row(
+      spacing: 8,
+      children: [
+        SizedBox(
+          width: 24,
+          height: 24,
+          child: Checkbox(
+            value: isChecked,
+            onChanged: (value) {
+              setState(() {
+                isChecked = value ?? false;
+              });
+            },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+            side: BorderSide(color: Colors.grey),
+            activeColor: Theme.of(context).colorScheme.primary,
+            checkColor: Colors.white,
+          ),
+        ),
+        Text(
+          "I agree to the Terms of Service and Privacy Policy",
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _signUpWith() {
+    return Padding(
+      padding: PaddingConstants.symmetricVerticalSmall,
+      child: Row(
+        spacing: 16,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AuthButton(
+            title: "Google",
+            imagePath: "assets/images/google.png",
+          ),
+          AuthButton(
+            title: "Facebook",
+            imagePath: "assets/images/facebook.png",
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _signUpDescription(BuildContext context) {
+    return Text(
+      'It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum',
+      textAlign: TextAlign.center,
+      style: GoogleFonts.montserrat(
+        fontSize: 14,
+        color: Theme.of(context).colorScheme.secondary,
+        fontWeight: FontWeight.w400,
+      ),
+    );
+  }
+
+  Widget _signUpText(BuildContext context) {
+    return Text(
+      'Sign Up',
+      style: GoogleFonts.montserrat(
+        fontSize: 32,
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
+
+  Widget _clapsImage(BuildContext context) {
+    return Container(
+      width: 90,
+      height: 90,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.tertiary,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Image.asset('assets/images/claps.png'),
     );
   }
 }
