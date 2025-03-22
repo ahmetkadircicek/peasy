@@ -7,6 +7,7 @@ import 'package:peasy/core/extensions/context_extension.dart';
 import 'package:peasy/features/home/model/category_model.dart';
 import 'package:peasy/features/home/model/section_model.dart';
 import 'package:peasy/features/home/viewmodel/home_view_model.dart';
+import 'package:peasy/features/main/viewmodel/main_view_model.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatelessWidget {
@@ -17,85 +18,8 @@ class HomeView extends StatelessWidget {
     return Consumer<HomeViewModel>(
       builder: (context, homeViewModel, child) {
         return Scaffold(
-          drawer: _buildDrawer(context),
-          key: homeViewModel.scaffoldKey,
           body: _buildBody(context),
         );
-      },
-    );
-  }
-
-  /// Builds the drawer widget with menu items.
-  Widget _buildDrawer(BuildContext context) {
-    return Drawer(
-      width: context.width * 0.6,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [context.primary, Color(0xFF002A73)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: ListView(
-            physics: ClampingScrollPhysics(),
-            padding: PaddingConstants.symmetricHorizontalMedium,
-            children: [
-              _buildDrawerHeader(context),
-              Divider(color: context.onPrimary),
-              _buildDrawerMenuItem(context, Icons.account_circle, 'Profile', () {}),
-              _buildDrawerMenuItem(context, Icons.payment, 'Payment', () {}),
-              _buildDrawerMenuItem(context, Icons.settings, 'Settings', () {}),
-              Divider(color: context.onPrimary),
-              _buildDrawerMenuItem(context, Icons.info, 'Information', () {}),
-              _buildDrawerMenuItem(context, Icons.contact_mail, 'Contact us', () {}),
-              _buildDrawerMenuItem(context, Icons.info_outline, 'About us', () {}),
-              Divider(color: context.onPrimary),
-              _buildDrawerMenuItem(context, Icons.logout, 'Log out', () {}),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Builds the header for the drawer.
-  Widget _buildDrawerHeader(BuildContext context) {
-    return Container(
-      padding: PaddingConstants.symmetricVerticalMedium,
-      child: Column(
-        spacing: 32,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(child: Image.asset('assets/images/logo.png', height: 30, color: context.onPrimary)),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Content(
-                text: "Welcome, back!",
-                color: context.onPrimary,
-              ),
-              Helper(
-                text: "Name Surname",
-                color: context.onPrimary,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Builds a menu item for the drawer.
-  Widget _buildDrawerMenuItem(BuildContext context, IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      contentPadding: PaddingConstants.zeroPadding,
-      leading: Icon(icon, color: context.onPrimary),
-      title: Text(title, style: TextStyle(color: context.onPrimary)),
-      onTap: () {
-        Navigator.pop(context);
-        onTap();
       },
     );
   }
@@ -104,7 +28,12 @@ class HomeView extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     return Stack(
       children: [
-        Image.asset('assets/images/background_vector.png'),
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/background_vector.png',
+            fit: BoxFit.cover,
+          ),
+        ),
         SingleChildScrollView(
           child: SafeArea(
             child: Padding(
@@ -274,19 +203,15 @@ class HomeView extends StatelessWidget {
   Widget _buildDrawerToggleButton(BuildContext context) {
     return Positioned(
       left: 0,
-      child: Consumer<HomeViewModel>(
-        builder: (BuildContext context, HomeViewModel value, Widget? child) {
-          return GestureDetector(
-            onTap: () {
-              value.scaffoldKey.currentState?.openDrawer(); // Open the drawer
-            },
-            child: CircleAvatar(
-              radius: 27,
-              backgroundColor: context.primaryColor,
-              child: Icon(Icons.menu, color: Colors.white),
-            ),
-          );
+      child: GestureDetector(
+        onTap: () {
+          MainViewModel.openDrawer();
         },
+        child: CircleAvatar(
+          radius: 27,
+          backgroundColor: context.primaryColor,
+          child: Icon(Icons.menu, color: Colors.white),
+        ),
       ),
     );
   }

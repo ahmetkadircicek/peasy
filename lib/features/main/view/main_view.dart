@@ -14,13 +14,100 @@ class MainView extends StatefulWidget {
 }
 
 class MainViewState extends State<MainView> {
+  // Create a global key for scaffold that can be accessed from other views
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Set the scaffold key in the view model
+    MainViewModel.setScaffoldKey(scaffoldKey);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MainViewModel>(
       builder: (context, viewModel, child) {
         return Scaffold(
+          key: scaffoldKey,
+          drawer: _buildDrawer(context),
           body: _buildBody(viewModel),
         );
+      },
+    );
+  }
+
+  /// Builds the drawer widget with menu items.
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      width: context.width * 0.6,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [context.primary, Color(0xFF002A73)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: ListView(
+            physics: ClampingScrollPhysics(),
+            padding: PaddingConstants.symmetricHorizontalMedium,
+            children: [
+              _buildDrawerHeader(context),
+              Divider(color: context.onPrimary),
+              _buildDrawerMenuItem(context, Icons.account_circle, 'Profile', () {}),
+              _buildDrawerMenuItem(context, Icons.payment, 'Payment', () {}),
+              _buildDrawerMenuItem(context, Icons.settings, 'Settings', () {}),
+              Divider(color: context.onPrimary),
+              _buildDrawerMenuItem(context, Icons.info, 'Information', () {}),
+              _buildDrawerMenuItem(context, Icons.contact_mail, 'Contact us', () {}),
+              _buildDrawerMenuItem(context, Icons.info_outline, 'About us', () {}),
+              Divider(color: context.onPrimary),
+              _buildDrawerMenuItem(context, Icons.logout, 'Log out', () {}),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Builds the header for the drawer.
+  Widget _buildDrawerHeader(BuildContext context) {
+    return Container(
+      padding: PaddingConstants.symmetricVerticalMedium,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(child: Image.asset('assets/images/logo.png', height: 30, color: context.onPrimary)),
+          const SizedBox(height: 32),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Content(
+                text: "Welcome, back!",
+                color: context.onPrimary,
+              ),
+              Helper(
+                text: "Name Surname",
+                color: context.onPrimary,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds a menu item for the drawer.
+  Widget _buildDrawerMenuItem(BuildContext context, IconData icon, String title, VoidCallback onTap) {
+    return ListTile(
+      contentPadding: PaddingConstants.zeroPadding,
+      leading: Icon(icon, color: context.onPrimary),
+      title: Text(title, style: TextStyle(color: context.onPrimary)),
+      onTap: () {
+        Navigator.pop(context);
+        onTap();
       },
     );
   }

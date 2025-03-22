@@ -3,7 +3,6 @@ import 'package:peasy/features/home/model/category_model.dart';
 import 'package:peasy/features/home/model/section_model.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   List<SectionModel> _sections = [];
   List<SectionModel> get sections => _sections;
 
