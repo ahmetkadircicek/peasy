@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ForgotPasswordProvider extends ChangeNotifier {
+class ForgotPasswordViewModel extends ChangeNotifier {
   int _step = 0;
 
   int get step => _step;

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
+import 'package:peasy/core/constants/navigation/navigation_service.dart';
+import 'package:peasy/core/widgets/background.dart';
 import 'package:peasy/core/widgets/main_button.dart';
-import 'package:peasy/features/forgot_password_flow/viewmodel/forgot_password_viewmodel.dart';
+import 'package:peasy/features/forgot_password_flow/viewmodel/forgot_password_view_model.dart';
+import 'package:peasy/features/forgot_password_flow/viewmodel/otp_view_model.dart';
 import 'package:provider/provider.dart';
 
 class EnterOtpView extends StatelessWidget {
@@ -32,7 +36,7 @@ class EnterOtpView extends StatelessWidget {
                 MainButton(
                     text: 'Reset Password',
                     onPressed: () {
-                      context.read<ForgotPasswordProvider>().nextStep();
+                      context.read<ForgotPasswordViewModel>().nextStep();
                     }),
                 // Didn't receive OTP?
                 _resendOTP(context),
@@ -55,11 +59,18 @@ class EnterOtpView extends StatelessWidget {
             color: Theme.of(context).colorScheme.secondary,
           ),
         ),
-        Text(
-          'Resend OTP',
-          style: GoogleFonts.montserrat(
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.primary,
+        GestureDetector(
+          onTap: () {
+            NavigationService.instance.navigateTo(
+              const Background(),
+            );
+          },
+          child: Text(
+            'Resend OTP',
+            style: GoogleFonts.montserrat(
+              fontSize: 14,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
       ],
@@ -68,30 +79,57 @@ class EnterOtpView extends StatelessWidget {
 
   // ignore: non_constant_identifier_names
   Widget _OTPTextfield(BuildContext context) {
+    final otpViewModel = Provider.of<OtpViewModel>(context);
     return Padding(
       padding: PaddingConstants.symmetricVerticalSmall,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 16,
         children: List.generate(5, (index) {
-          return Container(
-            width: 56,
-            height: 70,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.tertiary,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: TextField(
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-              maxLength: 1,
-              decoration: InputDecoration(
-                counterText: "",
-                border: InputBorder.none,
+          return KeyboardListener(
+            focusNode: FocusNode(),
+            onKeyEvent: (event) {
+              if (event is KeyDownEvent &&
+                  event.logicalKey == LogicalKeyboardKey.backspace) {
+                if (otpViewModel.controllers[index].text.isNotEmpty) {
+                  // Eğer içi doluysa sadece içeriği sil
+                  otpViewModel.controllers[index].clear();
+                } else if (index > 0) {
+                  // Eğer boşsa ve geri tuşuna basılmışsa bir önceki TextField'a geç
+                  FocusScope.of(context)
+                      .requestFocus(otpViewModel.focusNodes[index - 1]);
+                }
+              }
+            },
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              width: 56,
+              height: 70,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.tertiary,
+                borderRadius: BorderRadius.circular(12),
               ),
-              style: GoogleFonts.montserrat(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
+              child: TextField(
+                controller: otpViewModel.controllers[index],
+                focusNode: otpViewModel.focusNodes[index],
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
+                maxLength: 1,
+                decoration: const InputDecoration(
+                  counterText: "",
+                  border: InputBorder.none,
+                ),
+                style: GoogleFonts.montserrat(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+                onChanged: (value) =>
+                    otpViewModel.onOtpChanged(index, value, context),
+                onTap: () {
+                  otpViewModel.controllers[index].selection = TextSelection(
+                    baseOffset: 0,
+                    extentOffset: otpViewModel.controllers[index].text.length,
+                  );
+                },
               ),
             ),
           );

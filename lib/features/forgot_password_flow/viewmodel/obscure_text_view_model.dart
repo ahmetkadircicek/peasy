@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ObscureTextProvider extends ChangeNotifier {
+class ObscureTextViewModel extends ChangeNotifier {
   bool _isObscured = true;
 
   bool get isObscured => _isObscured;

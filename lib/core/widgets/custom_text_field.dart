@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
-import 'package:peasy/features/forgot_password_flow/viewmodel/obscure_text_viewmodel.dart';
+import 'package:peasy/features/forgot_password_flow/viewmodel/obscure_text_view_model.dart';
 import 'package:provider/provider.dart';
 
 class CustomTextField extends StatelessWidget {
@@ -16,7 +16,7 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ObscureTextProvider>(
+    return Consumer<ObscureTextViewModel>(
       builder: (context, provider, child) {
         return Container(
           decoration: BoxDecoration(

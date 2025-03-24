@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:peasy/features/forgot_password_flow/view/enter_otp_view.dart';
 import 'package:peasy/features/forgot_password_flow/view/forgot_password_view.dart';
 import 'package:peasy/features/forgot_password_flow/view/reset_password_view.dart';
-import 'package:peasy/features/forgot_password_flow/viewmodel/forgot_password_viewmodel.dart';
+import 'package:peasy/features/forgot_password_flow/viewmodel/forgot_password_view_model.dart';
 import 'package:provider/provider.dart';
 
 class ForgotPasswordFlowView extends StatelessWidget {
@@ -10,7 +10,7 @@ class ForgotPasswordFlowView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<ForgotPasswordProvider>(context);
+    var provider = Provider.of<ForgotPasswordViewModel>(context);
     int currentStep = provider.step;
 
     return Scaffold(
@@ -61,7 +61,7 @@ class ForgotPasswordFlowView extends StatelessWidget {
     );
   }
 
-  Widget _backButton(ForgotPasswordProvider provider, BuildContext context) {
+  Widget _backButton(ForgotPasswordViewModel provider, BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [

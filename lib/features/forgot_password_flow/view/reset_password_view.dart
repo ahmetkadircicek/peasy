@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/widgets/custom_text_field.dart';
 import 'package:peasy/core/widgets/main_button.dart';
-import 'package:peasy/features/forgot_password_flow/viewmodel/forgot_password_viewmodel.dart';
+import 'package:peasy/features/forgot_password_flow/viewmodel/forgot_password_view_model.dart';
 import 'package:provider/provider.dart';
 
 class ResetPasswordView extends StatelessWidget {
@@ -41,7 +41,7 @@ class ResetPasswordView extends StatelessWidget {
                     icon: Icons.lock_outline,
                     text: 'Submitting...',
                     onPressed: () {
-                      context.read<ForgotPasswordProvider>().resetStep();
+                      context.read<ForgotPasswordViewModel>().resetStep();
                       Navigator.pop(context);
                     }),
               ],
