@@ -7,7 +7,7 @@ import 'package:peasy/core/widgets/auth_button.dart';
 import 'package:peasy/core/widgets/custom_text_field.dart';
 import 'package:peasy/core/widgets/main_button.dart';
 import 'package:peasy/features/forgot_password_flow/view/forgot_password_flow_view.dart';
-import 'package:peasy/features/main/view/main_view.dart';
+import 'package:peasy/features/navigation/view/navigation_view.dart';
 import 'package:peasy/features/sign_up/view/sign_up_view.dart';
 
 class SignInView extends StatefulWidget {
@@ -56,7 +56,7 @@ class _SignInViewState extends State<SignInView> {
                   text: "Sign In",
                   onPressed: () {
                     NavigationService.instance.navigateTo(
-                      const MainView(),
+                      const NavigationView(),
                     );
                   },
                 ),

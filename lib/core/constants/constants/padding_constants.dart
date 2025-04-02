@@ -9,7 +9,8 @@ class PaddingConstants {
 
   PaddingConstants._init();
 
-  static EdgeInsets pagePadding = EdgeInsets.symmetric(horizontal: 16.0) + EdgeInsets.only(bottom: 60.0);
+  static EdgeInsets pagePadding =
+      EdgeInsets.symmetric(horizontal: 16.0) + EdgeInsets.only(bottom: 80.0) + EdgeInsets.only(top: 16.0);
   static const EdgeInsets zeroPadding = EdgeInsets.zero;
 
   static const EdgeInsets allSmall = EdgeInsets.all(12.0);

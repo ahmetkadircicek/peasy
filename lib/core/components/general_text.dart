@@ -8,6 +8,7 @@ class _GeneralText extends StatelessWidget {
   final bool isCentred;
   final double fontSize;
   final bool overflow;
+  final int? maxLines;
 
   const _GeneralText({
     super.key,
@@ -17,6 +18,7 @@ class _GeneralText extends StatelessWidget {
     this.isCentred = false,
     this.fontSize = 16,
     this.overflow = false,
+    this.maxLines,
   });
 
   @override
@@ -30,6 +32,7 @@ class _GeneralText extends StatelessWidget {
         color: color,
       ),
       overflow: overflow ? TextOverflow.ellipsis : null,
+      maxLines: maxLines,
     );
   }
 }
@@ -41,7 +44,8 @@ class Headline extends _GeneralText {
     super.color = null,
     super.isBold = true,
     super.isCentred,
-    super.fontSize = 28,
+    super.fontSize = 24,
+    super.maxLines,
   });
 }
 
@@ -52,7 +56,8 @@ class SubHeadline extends _GeneralText {
     super.color = null,
     super.isBold,
     super.isCentred,
-    super.fontSize = 20,
+    super.fontSize = 22,
+    super.maxLines,
   });
 }
 
@@ -63,7 +68,8 @@ class Highlight extends _GeneralText {
     super.color = null,
     super.isBold = true,
     super.isCentred,
-    super.fontSize = 18,
+    super.fontSize = 20,
+    super.maxLines,
   });
 }
 
@@ -74,7 +80,8 @@ class Content extends _GeneralText {
     super.color = null,
     super.isBold,
     super.isCentred,
-    super.fontSize = 16,
+    super.fontSize = 18,
+    super.maxLines,
   });
 }
 
@@ -85,8 +92,9 @@ class Helper extends _GeneralText {
     super.color = null,
     super.isBold,
     super.isCentred,
-    super.fontSize = 12,
+    super.fontSize = 14,
     super.overflow,
+    super.maxLines,
   });
 }
 
@@ -97,6 +105,8 @@ class Label extends _GeneralText {
     super.color = null,
     super.isBold,
     super.isCentred,
-    super.fontSize = 10,
+    super.fontSize = 12,
+    super.overflow,
+    super.maxLines,
   });
 }

@@ -3,30 +3,28 @@ import 'package:peasy/core/components/general_text.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
 import 'package:peasy/features/home/view/home_view.dart';
-import 'package:peasy/features/main/viewmodel/main_view_model.dart';
+import 'package:peasy/features/navigation/viewmodel/navigation_view_model.dart';
 import 'package:provider/provider.dart';
 
-class MainView extends StatefulWidget {
-  const MainView({super.key});
+class NavigationView extends StatefulWidget {
+  const NavigationView({super.key});
 
   @override
-  State<MainView> createState() => MainViewState();
+  State<NavigationView> createState() => NavigationViewState();
 }
 
-class MainViewState extends State<MainView> {
-  // Create a global key for scaffold that can be accessed from other views
+class NavigationViewState extends State<NavigationView> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    // Set the scaffold key in the view model
-    MainViewModel.setScaffoldKey(scaffoldKey);
+    NavigationViewModel.setScaffoldKey(scaffoldKey);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MainViewModel>(
+    return Consumer<NavigationViewModel>(
       builder: (context, viewModel, child) {
         return Scaffold(
           key: scaffoldKey,
@@ -112,8 +110,8 @@ class MainViewState extends State<MainView> {
     );
   }
 
-  Widget _buildBody(MainViewModel viewModel) {
-    return Consumer<MainViewModel>(
+  Widget _buildBody(NavigationViewModel viewModel) {
+    return Consumer<NavigationViewModel>(
       builder: (context, viewModel, child) {
         return Stack(
           children: [
@@ -144,61 +142,70 @@ class MainViewState extends State<MainView> {
   }
 
   /// Builds the custom navigation bar with navigation items.
-  Widget _buildCustomNavBar(MainViewModel viewModel) {
-    return Padding(
-      padding: PaddingConstants.allSmall,
-      child: Container(
-        padding: PaddingConstants.symmetricHorizontalSmall,
-        height: 60,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: context.primary,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavBarItem(
-              icon: Icons.home,
-              text: 'Home',
-              index: 0,
-              selectedIndex: viewModel.selectedIndex,
-              onTap: () => viewModel.onItemTapped(0),
-              context: context,
+  Widget _buildCustomNavBar(NavigationViewModel viewModel) {
+    return Consumer<NavigationViewModel>(
+      builder: (context, navigationViewModel, child) {
+        return AnimatedSlide(
+          offset: navigationViewModel.selectedIndex != 2 ? Offset(0, 0) : Offset(0, 1),
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          child: Padding(
+            padding: PaddingConstants.allSmall,
+            child: Container(
+              padding: PaddingConstants.symmetricHorizontalSmall,
+              height: 60,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: context.primary,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavBarItem(
+                    icon: Icons.home,
+                    text: 'Home',
+                    index: 0,
+                    selectedIndex: viewModel.selectedIndex,
+                    onTap: () => viewModel.onItemTapped(0),
+                    context: context,
+                  ),
+                  _buildNavBarItem(
+                    icon: Icons.discount,
+                    text: 'Sales',
+                    index: 1,
+                    selectedIndex: viewModel.selectedIndex,
+                    onTap: () => viewModel.onItemTapped(1),
+                    context: context,
+                  ),
+                  _buildCenterNavBarItem(
+                    icon: Icons.barcode_reader,
+                    onTap: () => viewModel.onItemTapped(2),
+                    context: context,
+                  ),
+                  _buildNavBarItem(
+                    index: 3,
+                    icon: Icons.receipt_long,
+                    text: 'Receipts',
+                    selectedIndex: viewModel.selectedIndex,
+                    onTap: () => viewModel.onItemTapped(3),
+                    context: context,
+                  ),
+                  _buildNavBarItem(
+                    icon: Icons.shopping_cart,
+                    text: 'Cart',
+                    index: 4,
+                    selectedIndex: viewModel.selectedIndex,
+                    onTap: () => viewModel.onItemTapped(4),
+                    context: context,
+                  ),
+                ],
+              ),
             ),
-            _buildNavBarItem(
-              icon: Icons.discount,
-              text: 'Sales',
-              index: 1,
-              selectedIndex: viewModel.selectedIndex,
-              onTap: () => viewModel.onItemTapped(1),
-              context: context,
-            ),
-            _buildCenterNavBarItem(
-              icon: Icons.barcode_reader,
-              onTap: () => viewModel.onItemTapped(2),
-              context: context,
-            ),
-            _buildNavBarItem(
-              index: 3,
-              icon: Icons.receipt_long,
-              text: 'Receipts',
-              selectedIndex: viewModel.selectedIndex,
-              onTap: () => viewModel.onItemTapped(3),
-              context: context,
-            ),
-            _buildNavBarItem(
-              icon: Icons.shopping_cart,
-              text: 'Cart',
-              index: 4,
-              selectedIndex: viewModel.selectedIndex,
-              onTap: () => viewModel.onItemTapped(4),
-              context: context,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

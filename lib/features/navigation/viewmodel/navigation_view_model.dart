@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MainViewModel with ChangeNotifier {
-  // Static key that can be accessed from anywhere to control the drawer
+class NavigationViewModel with ChangeNotifier {
   static GlobalKey<ScaffoldState>? _scaffoldKey;
 
   static void setScaffoldKey(GlobalKey<ScaffoldState> key) {

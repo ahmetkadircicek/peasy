@@ -35,4 +35,14 @@ extension BuildContextExtension<T> on BuildContext {
     final width = MediaQuery.of(this).size.width * (percentage / 100);
     return SizedBox(width: width);
   }
+
+  // Spacer with fixed height in pixels
+  Widget spacerHeightFixed(double height) {
+    return SizedBox(height: height);
+  }
+
+// Spacer with fixed width in pixels
+  Widget spacerWidthFixed(double width) {
+    return SizedBox(width: width);
+  }
 }
