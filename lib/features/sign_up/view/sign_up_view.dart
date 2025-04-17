@@ -73,9 +73,7 @@ class _SignUpViewState extends State<SignUpView> {
           ),
         ),
         GestureDetector(
-          onTap: () {
-            print("Sign In");
-          },
+          onTap: () {},
           child: GestureDetector(
             onTap: () {
               NavigationService.instance.navigateTo(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:peasy/core/components/general_text.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
+import 'package:peasy/core/services/auth/auth_service.dart';
 import 'package:peasy/features/home/view/home_view.dart';
 import 'package:peasy/features/navigation/viewmodel/navigation_view_model.dart';
 import 'package:provider/provider.dart';
@@ -54,15 +55,22 @@ class NavigationViewState extends State<NavigationView> {
             children: [
               _buildDrawerHeader(context),
               Divider(color: context.onPrimary),
-              _buildDrawerMenuItem(context, Icons.account_circle, 'Profile', () {}),
+              _buildDrawerMenuItem(
+                  context, Icons.account_circle, 'Profile', () {}),
               _buildDrawerMenuItem(context, Icons.payment, 'Payment', () {}),
               _buildDrawerMenuItem(context, Icons.settings, 'Settings', () {}),
               Divider(color: context.onPrimary),
               _buildDrawerMenuItem(context, Icons.info, 'Information', () {}),
-              _buildDrawerMenuItem(context, Icons.contact_mail, 'Contact us', () {}),
-              _buildDrawerMenuItem(context, Icons.info_outline, 'About us', () {}),
+              _buildDrawerMenuItem(
+                  context, Icons.contact_mail, 'Contact us', () {}),
+              _buildDrawerMenuItem(
+                  context, Icons.info_outline, 'About us', () {}),
               Divider(color: context.onPrimary),
-              _buildDrawerMenuItem(context, Icons.logout, 'Log out', () {}),
+              _buildDrawerMenuItem(context, Icons.logout, 'Log out', () {
+                // Handle logout action
+                AuthService().signOut();
+                Navigator.pop(context);
+              }),
             ],
           ),
         ),
@@ -77,7 +85,9 @@ class NavigationViewState extends State<NavigationView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(child: Image.asset('assets/images/logo.png', height: 30, color: context.onPrimary)),
+          Center(
+              child: Image.asset('assets/images/logo.png',
+                  height: 30, color: context.onPrimary)),
           const SizedBox(height: 32),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +108,8 @@ class NavigationViewState extends State<NavigationView> {
   }
 
   /// Builds a menu item for the drawer.
-  Widget _buildDrawerMenuItem(BuildContext context, IconData icon, String title, VoidCallback onTap) {
+  Widget _buildDrawerMenuItem(
+      BuildContext context, IconData icon, String title, VoidCallback onTap) {
     return ListTile(
       contentPadding: PaddingConstants.zeroPadding,
       leading: Icon(icon, color: context.onPrimary),
@@ -146,7 +157,9 @@ class NavigationViewState extends State<NavigationView> {
     return Consumer<NavigationViewModel>(
       builder: (context, navigationViewModel, child) {
         return AnimatedSlide(
-          offset: navigationViewModel.selectedIndex != 2 ? Offset(0, 0) : Offset(0, 1),
+          offset: navigationViewModel.selectedIndex != 2
+              ? Offset(0, 0)
+              : Offset(0, 1),
           duration: Duration(milliseconds: 500),
           curve: Curves.easeInOut,
           child: Padding(
@@ -218,7 +231,9 @@ class NavigationViewState extends State<NavigationView> {
     required BuildContext context,
   }) {
     final isSelected = index == selectedIndex;
-    final iconColor = isSelected ? context.onPrimary : context.onPrimary.withValues(alpha: 0.5);
+    final iconColor = isSelected
+        ? context.onPrimary
+        : context.onPrimary.withValues(alpha: 0.5);
 
     return GestureDetector(
       onTap: onTap,

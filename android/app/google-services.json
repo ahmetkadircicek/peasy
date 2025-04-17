@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "154307594725",
+    "project_id": "peasy-8f59e",
+    "storage_bucket": "peasy-8f59e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:154307594725:android:89c006102b63b52285c70c",
+        "android_client_info": {
+          "package_name": "com.example.peasy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "154307594725-v6nm8nue45tcti9enhhn66ru950ffonj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8_587bkPgK9QUr5k4xSEsobCVATdKqMg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "154307594725-v6nm8nue45tcti9enhhn66ru950ffonj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "154307594725-2io7sapvepl8o823fd7lgbkt6lokl2ag.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.peasy"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

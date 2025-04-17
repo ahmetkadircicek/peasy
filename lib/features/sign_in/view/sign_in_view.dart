@@ -38,7 +38,7 @@ class _SignInViewState extends State<SignInView> {
                 // Sign In Description
                 _signInDescription(context),
 
-                // Sign In with Google and Facebook
+                // Sign In with Google and Apple
                 _signInWith(),
 
                 // Divider
@@ -131,8 +131,8 @@ class _SignInViewState extends State<SignInView> {
             imagePath: "assets/images/google.png",
           ),
           AuthButton(
-            title: "Facebook",
-            imagePath: "assets/images/facebook.png",
+            title: "Apple",
+            imagePath: "assets/images/apple.png",
           ),
         ],
       ),
