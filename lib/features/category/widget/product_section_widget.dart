@@ -27,26 +27,28 @@ class ProductSectionWidget extends StatelessWidget {
         categorizedProducts[category] = [product];
       }
     }
-    return Column(
-      spacing: 16,
-      children: categorizedProducts.entries.map((entry) {
-        String sectionTitle = entry.key;
-        List<ProductModel> sectionProducts = entry.value;
-        return Column(
-          spacing: 8,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionTitle(sectionTitle),
-            _buildProductList(sectionProducts),
-          ],
-        );
-      }).toList(),
+    return SingleChildScrollView(
+      child: Column(
+        spacing: 16,
+        children: categorizedProducts.entries.map((entry) {
+          String sectionTitle = entry.key;
+          List<ProductModel> sectionProducts = entry.value;
+          return Column(
+            spacing: 8,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSectionTitle(sectionTitle),
+              _buildProductList(sectionProducts),
+            ],
+          );
+        }).toList(),
+      ),
     );
   }
 
   Content _buildSectionTitle(String sectionTitle) {
     return Content(
-      text: 'SECTION $sectionTitle ',
+      text: 'SECTION $sectionTitle',
       isBold: true,
     );
   }
@@ -54,6 +56,7 @@ class ProductSectionWidget extends StatelessWidget {
   /// Builds the list of products for a section.
   Widget _buildProductList(List<ProductModel> products) {
     return ListView.builder(
+      padding: PaddingConstants.zeroPadding,
       shrinkWrap: true,
       clipBehavior: Clip.none,
       itemCount: products.length,

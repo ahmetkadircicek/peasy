@@ -1,83 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:peasy/features/home/model/category_model.dart';
-import 'package:peasy/features/home/model/section_model.dart';
+import 'package:peasy/features/home/model/subcategory_model.dart';
+import 'package:peasy/features/home/service/category_service.dart';
+import 'package:peasy/features/home/service/subcategory_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  List<SectionModel> _sections = [];
-  List<SectionModel> get sections => _sections;
+  List<CategoryModel> _categories = [];
+  List<SubcategoryModel> _subcategories = [];
+  List<CategoryModel> get categories => _categories;
+  List<SubcategoryModel> get subcategories => _subcategories;
 
   HomeViewModel() {
     _fetchSections();
+    _fetchSubcategories();
   }
 
-  void _fetchSections() {
-    _sections = [
-      SectionModel(
-        title: 'Fruits and Vegetables',
-        categories: [
-          CategoryModel(
-            title: 'Fresh Fruits',
-            imagePath: 'assets/images/dummy_category.png',
-            description: 'Seasonal and exotic fruits for healthy snacking.',
-          ),
-          CategoryModel(
-            title: 'Vegetables',
-            imagePath: 'assets/images/dummy_category.png',
-            description: 'Fresh and organic vegetables for your meals.',
-          ),
-          CategoryModel(
-            title: 'Berries',
-            imagePath: 'assets/images/dummy_category.png',
-            description: 'Delicious and nutritious berries for a healthy diet.',
-          ),
-          CategoryModel(
-            title: 'Citrus Fruits',
-            imagePath: 'assets/images/dummy_category.png',
-            description: 'Zesty citrus fruits packed with vitamin C.',
-          ),
-        ],
-      ),
-      SectionModel(
-        title: 'Dairy Products',
-        categories: [
-          CategoryModel(
-            title: 'Milk',
-            imagePath: 'assets/images/dummy_category.png',
-            description: 'Fresh and pure dairy milk for daily nutrition.',
-          ),
-          CategoryModel(
-            title: 'Cheese',
-            imagePath: 'assets/images/dummy_category.png',
-            description: 'Varieties of cheese for every dish and snack.',
-          ),
-          CategoryModel(
-            title: 'Yogurt',
-            imagePath: 'assets/images/dummy_category.png',
-            description: 'Healthy probiotic yogurt for digestion.',
-          ),
-        ],
-      ),
-      SectionModel(
-        title: 'Dairy Products',
-        categories: [
-          CategoryModel(
-            title: 'Milk',
-            imagePath: 'assets/images/dummy_category.png',
-            description: 'Fresh and pure dairy milk for daily nutrition.',
-          ),
-          CategoryModel(
-            title: 'Cheese',
-            imagePath: 'assets/images/dummy_category.png',
-            description: 'Varieties of cheese for every dish and snack.',
-          ),
-          CategoryModel(
-            title: 'Yogurt',
-            imagePath: 'assets/images/dummy_category.png',
-            description: 'Healthy probiotic yogurt for digestion.',
-          ),
-        ],
-      ),
-    ];
+  void _fetchSections() async {
+    final categories = await CategoryService().getAllCategories();
+    _categories = categories.map((category) {
+      return CategoryModel(
+        id: category.id,
+        name: category.name,
+      );
+    }).toList();
     notifyListeners();
+  }
+
+  void _fetchSubcategories() async {
+    final subcategories = await SubcategoryService().getAllSubcategories();
+    _subcategories = subcategories.map((subcategory) {
+      return SubcategoryModel(
+        id: subcategory.id,
+        categoryId: subcategory.categoryId,
+        title: subcategory.title,
+        imagePath: subcategory.imagePath,
+        description: subcategory.description,
+      );
+    }).toList();
+    notifyListeners();
+  }
+
+  List<SubcategoryModel> getSubcategoriesForCategory(String categoryId) {
+    return _subcategories
+        .where((subcategory) => subcategory.categoryId == categoryId)
+        .toList();
   }
 }

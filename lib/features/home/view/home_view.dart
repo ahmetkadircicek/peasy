@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:peasy/core/constants/constants/general_constants.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
+import 'package:peasy/features/home/viewmodel/home_view_model.dart';
 import 'package:peasy/features/home/widget/advertisement_widget.dart';
 import 'package:peasy/features/home/widget/category_section_widget.dart';
-import 'package:peasy/features/home/viewmodel/home_view_model.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatelessWidget {
@@ -61,7 +61,7 @@ class HomeView extends StatelessWidget {
               padding: PaddingConstants.pagePadding,
               sliver: SliverToBoxAdapter(
                 child: Column(
-                  spacing: 16,
+                  spacing: 20,
                   children: [
                     AdvertisementWidget(),
                     _buildSections(context),
@@ -109,8 +109,12 @@ class HomeView extends StatelessWidget {
       builder: (context, homeViewModel, child) {
         return Column(
           spacing: 20,
-          children: homeViewModel.sections.map((section) {
-            return CategorySectionWidget(section: section);
+          children: homeViewModel.categories.map((section) {
+            return CategorySectionWidget(
+              categoryModel: section,
+              subcategories:
+                  homeViewModel.getSubcategoriesForCategory(section.id),
+            );
           }).toList(),
         );
       },

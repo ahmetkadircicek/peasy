@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:peasy/core/components/divider.dart';
+import 'package:peasy/core/components/general_divider.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/constants/navigation/navigation_service.dart';
+import 'package:peasy/core/extensions/context_extension.dart';
 import 'package:peasy/core/widgets/auth_button.dart';
 import 'package:peasy/core/widgets/custom_text_field.dart';
 import 'package:peasy/core/widgets/main_button.dart';
@@ -30,16 +31,16 @@ class _SignInViewState extends State<SignInView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Wave Image
-                _waveImage(context),
+                _buildWaveImage(context),
 
                 // Sign In Text
-                _signInText(context),
+                _buildSignInText(context),
 
                 // Sign In Description
-                _signInDescription(context),
+                _buildSignInDescription(context),
 
                 // Sign In with Google and Apple
-                _signInWith(),
+                _buildSignInWith(),
 
                 // Divider
                 GeneralDivider(text: "or"),
@@ -49,7 +50,7 @@ class _SignInViewState extends State<SignInView> {
                 CustomTextField(hintText: "Password", isPassword: true),
 
                 // Forgot Password
-                _forgotPassword(context),
+                _buildForgotPassword(context),
 
                 // Sign In Button
                 MainButton(
@@ -62,7 +63,7 @@ class _SignInViewState extends State<SignInView> {
                 ),
 
                 // Don't have an account?
-                _haveAccount(context),
+                _buildHaveAccount(context),
               ],
             ),
           ),
@@ -71,7 +72,7 @@ class _SignInViewState extends State<SignInView> {
     );
   }
 
-  Widget _haveAccount(BuildContext context) {
+  Widget _buildHaveAccount(BuildContext context) {
     return Row(
       spacing: 5,
       children: [
@@ -90,7 +91,7 @@ class _SignInViewState extends State<SignInView> {
           child: Text(
             "Sign Up",
             style: GoogleFonts.montserrat(
-              color: Theme.of(context).colorScheme.primary,
+              color: context.primary,
               fontSize: 12,
             ),
           ),
@@ -99,7 +100,7 @@ class _SignInViewState extends State<SignInView> {
     );
   }
 
-  Widget _forgotPassword(BuildContext context) {
+  Widget _buildForgotPassword(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
       child: GestureDetector(
@@ -112,14 +113,14 @@ class _SignInViewState extends State<SignInView> {
           "Forgot Password?",
           style: GoogleFonts.montserrat(
             fontSize: 12,
-            color: Theme.of(context).colorScheme.primary,
+            color: context.primary,
           ),
         ),
       ),
     );
   }
 
-  Widget _signInWith() {
+  Widget _buildSignInWith() {
     return Padding(
       padding: PaddingConstants.symmetricVerticalSmall,
       child: Row(
@@ -139,35 +140,35 @@ class _SignInViewState extends State<SignInView> {
     );
   }
 
-  Widget _signInDescription(BuildContext context) {
+  Widget _buildSignInDescription(BuildContext context) {
     return Text(
       'It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum',
       textAlign: TextAlign.center,
       style: GoogleFonts.montserrat(
         fontSize: 14,
-        color: Theme.of(context).colorScheme.secondary,
+        color: context.secondary,
         fontWeight: FontWeight.w400,
       ),
     );
   }
 
-  Widget _signInText(BuildContext context) {
+  Widget _buildSignInText(BuildContext context) {
     return Text(
       'Sign In',
       style: GoogleFonts.montserrat(
         fontSize: 32,
         fontWeight: FontWeight.w600,
-        color: Theme.of(context).colorScheme.primary,
+        color: context.primary,
       ),
     );
   }
 
-  Widget _waveImage(BuildContext context) {
+  Widget _buildWaveImage(BuildContext context) {
     return Container(
       width: 90,
       height: 90,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.tertiary,
+        color: context.tertiary,
         borderRadius: BorderRadius.circular(25),
       ),
       child: Image.asset('assets/images/wave.png'),

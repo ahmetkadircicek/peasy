@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peasy/core/components/general_divider.dart';
 import 'package:peasy/core/components/general_text.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
@@ -54,18 +55,18 @@ class NavigationViewState extends State<NavigationView> {
             padding: PaddingConstants.symmetricHorizontalMedium,
             children: [
               _buildDrawerHeader(context),
-              Divider(color: context.onPrimary),
+              GeneralDivider(),
               _buildDrawerMenuItem(
                   context, Icons.account_circle, 'Profile', () {}),
               _buildDrawerMenuItem(context, Icons.payment, 'Payment', () {}),
               _buildDrawerMenuItem(context, Icons.settings, 'Settings', () {}),
-              Divider(color: context.onPrimary),
+              GeneralDivider(),
               _buildDrawerMenuItem(context, Icons.info, 'Information', () {}),
               _buildDrawerMenuItem(
                   context, Icons.contact_mail, 'Contact us', () {}),
               _buildDrawerMenuItem(
                   context, Icons.info_outline, 'About us', () {}),
-              Divider(color: context.onPrimary),
+              GeneralDivider(),
               _buildDrawerMenuItem(context, Icons.logout, 'Log out', () {
                 // Handle logout action
                 AuthService().signOut();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:peasy/core/components/divider.dart';
+import 'package:peasy/core/components/general_divider.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/constants/navigation/navigation_service.dart';
 import 'package:peasy/core/widgets/auth_button.dart';

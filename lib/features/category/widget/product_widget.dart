@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:peasy/core/components/general_tag.dart';
 import 'package:peasy/core/components/general_text.dart';
 import 'package:peasy/core/constants/constants/general_constants.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
+import 'package:peasy/core/constants/enums/product_status_enum.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
 import 'package:peasy/features/category/model/product_model.dart';
 
@@ -14,54 +16,63 @@ class ProductWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70,
       padding: PaddingConstants.allSmall,
       decoration: BoxDecoration(
         color: context.surface,
         borderRadius: GeneralConstants.instance.borderRadiusMedium,
       ),
       child: Row(
-        spacing: 8,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _buildProductImage(product.imagePath),
           _buildProductInfo(product, context),
-          _buildProductSectionNumber(product.section),
-          _buildProductStockStatus(product.stockStatus),
+          _buildProductSectionChip(
+              product.section, product.stockStatus, context),
+          _buildProductStockChip(product.stockStatus, context),
+          _buildProductPrice(product.price, context),
         ],
       ),
     );
   }
 
   Widget _buildProductInfo(ProductModel product, BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Row(
+      spacing: 8,
       children: [
-        _buildProductTitle(product.name),
-        _buildProductId(context, product.id),
+        _buildProductImage(product.imagePath),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildProductTitle(product.name),
+            _buildProductId(context, product.id),
+          ],
+        ),
       ],
     );
   }
 
   /// Builds the product image widget.
   Widget _buildProductImage(String imagePath) {
-    return AspectRatio(
-      aspectRatio: 1,
-      child: Image.asset(imagePath),
-    );
+    return Image.asset(imagePath);
   }
 
-  /// Builds the product section number widget.
-  Widget _buildProductSectionNumber(String sectionNumber) {
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Helper(
-          text: sectionNumber,
-        ),
-      ),
+  /// Builds the product section chip widget using GeneralTag.
+  Widget _buildProductSectionChip(String sectionNumber,
+      ProductStatusEnum stockStatus, BuildContext context) {
+    return GeneralTag(label: sectionNumber, color: context.primary);
+  }
+
+  /// Builds the product stock chip widget using GeneralTag.
+  Widget _buildProductStockChip(
+      ProductStatusEnum stockStatus, BuildContext context) {
+    return GeneralTag(label: stockStatus.name, color: stockStatus.color);
+  }
+
+  /// Builds the product price widget.
+  Widget _buildProductPrice(String price, BuildContext context) {
+    return Helper(
+      text: '\$$price',
+      color: context.onSurface,
     );
   }
 
@@ -77,19 +88,6 @@ class ProductWidget extends StatelessWidget {
     return Label(
       text: id,
       color: context.secondary,
-    );
-  }
-
-  /// Builds the product stock status widget.
-  Widget _buildProductStockStatus(String stockStatus) {
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Helper(
-          text: stockStatus,
-          color: stockStatus == 'In Stock' ? Colors.green : Colors.red,
-        ),
-      ),
     );
   }
 }

@@ -25,7 +25,7 @@ class GeneralDivider extends StatelessWidget {
   Widget _buildDivider(BuildContext context, int flex) {
     return Expanded(
       flex: flex,
-      child: Divider(color: context.tertiary),
+      child: Divider(color: context.tertiary.withValues(alpha: 0.5)),
     );
   }
 

@@ -1,11 +1,6 @@
 class CategoryModel {
-  final String title;
-  final String imagePath;
-  final String description;
+  final String id;
+  final String name;
 
-  CategoryModel({
-    required this.title,
-    required this.imagePath,
-    required this.description,
-  });
+  CategoryModel({required this.id, required this.name});
 }
