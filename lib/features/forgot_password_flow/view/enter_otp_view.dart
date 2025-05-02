@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/constants/navigation/navigation_service.dart';
-import 'package:peasy/core/widgets/background.dart';
 import 'package:peasy/core/widgets/main_button.dart';
 import 'package:peasy/features/forgot_password_flow/viewmodel/forgot_password_view_model.dart';
 import 'package:peasy/features/forgot_password_flow/viewmodel/otp_view_model.dart';
@@ -62,7 +61,7 @@ class EnterOtpView extends StatelessWidget {
         GestureDetector(
           onTap: () {
             NavigationService.instance.navigateTo(
-              const Background(),
+              const EnterOtpView(),
             );
           },
           child: Text(

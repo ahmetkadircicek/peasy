@@ -5,11 +5,19 @@ class MainButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final IconData? icon;
+  final Color? color;
+  final Color? textColor;
+  final double? width;
+  final double? height;
   const MainButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.icon,
+    this.color,
+    this.textColor,
+    this.width,
+    this.height,
   });
 
   @override
@@ -17,11 +25,14 @@ class MainButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: color ?? Theme.of(context).colorScheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
-        minimumSize: const Size(double.infinity, 60),
+        minimumSize: Size(
+          width ?? MediaQuery.of(context).size.width * 0.8,
+          height ?? 50,
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -36,7 +47,7 @@ class MainButton extends StatelessWidget {
           Text(
             text,
             style: GoogleFonts.montserrat(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: textColor ?? Theme.of(context).colorScheme.onPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),

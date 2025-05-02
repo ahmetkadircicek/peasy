@@ -1,3 +1,4 @@
+import 'package:peasy/features/cart/viewmodel/cart_view_model.dart';
 import 'package:peasy/features/category/viewmodel/category_view_model.dart';
 import 'package:peasy/features/forgot_password_flow/viewmodel/forgot_password_view_model.dart';
 import 'package:peasy/features/forgot_password_flow/viewmodel/obscure_text_view_model.dart';
@@ -25,5 +26,6 @@ class ProviderManager {
     ChangeNotifierProvider(create: (context) => ForgotPasswordViewModel()),
     ChangeNotifierProvider(create: (context) => ObscureTextViewModel()),
     ChangeNotifierProvider(create: (context) => OtpViewModel()),
+    ChangeNotifierProvider(create: (context) => CartViewModel()),
   ];
 }

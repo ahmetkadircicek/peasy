@@ -4,7 +4,7 @@ import 'package:peasy/core/constants/navigation/navigation_service.dart';
 import 'package:peasy/core/init/notifier/provider_manager.dart';
 import 'package:peasy/core/init/theme/app_theme.dart';
 import 'package:peasy/features/home/viewmodel/advertisement_view_model.dart';
-import 'package:peasy/features/navigation/view/navigation_view.dart';
+import 'package:peasy/features/sign_in/view/sign_in_view.dart';
 import 'package:peasy/firebase_options.dart';
 import 'package:provider/provider.dart';
 
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       title: 'Peasy',
       theme: LightTheme.theme,
       debugShowCheckedModeBanner: false,
-      home: const NavigationView(),
+      home: const SignInView(),
       // localizationsDelegates: context.localizationDelegates,
       // supportedLocales: context.supportedLocales,
       // locale: context.locale,
