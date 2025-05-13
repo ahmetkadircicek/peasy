@@ -21,6 +21,7 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+<<<<<<< HEAD
 	
 	<!-- GIDClientID -->
 	<key>GIDClientID</key>
@@ -49,6 +50,8 @@
 		<string>com.google.gppconsent.2.0</string>
 	</array>
 
+=======
+>>>>>>> 99726b8 (feat(auth): implement Apple sign-in and update iOS project configurations)
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -65,5 +68,15 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+<<<<<<< HEAD
+=======
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+>>>>>>> 99726b8 (feat(auth): implement Apple sign-in and update iOS project configurations)
 </dict>
 </plist>

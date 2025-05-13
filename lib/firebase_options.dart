@@ -69,7 +69,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '154307594725',
     projectId: 'peasy-8f59e',
     storageBucket: 'peasy-8f59e.firebasestorage.app',
-    iosClientId: '154307594725-2io7sapvepl8o823fd7lgbkt6lokl2ag.apps.googleusercontent.com',
-    iosBundleId: 'com.example.peasy',
+    iosClientId:
+        '154307594725-2io7sapvepl8o823fd7lgbkt6lokl2ag.apps.googleusercontent.com',
+    iosBundleId: 'com.peasy.ios',
   );
 }

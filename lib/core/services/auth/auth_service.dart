@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:io' show Platform;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthService {
   // Instantiate FirebaseAuth
@@ -53,25 +57,110 @@ class AuthService {
   }
 
   // Apple login Method
-  // Future<UserCredential?> signInWithApple() async {
-  //   try {
-  //     final appleCredential = await SignInWithApple.getAppleIDCredential(
-  //       scopes: [
-  //         AppleIDAuthorizationScopes.email,
-  //         AppleIDAuthorizationScopes.fullName,
-  //       ],
-  //     );
+  Future<UserCredential?> signInWithApple() async {
+    try {
+      // Use proper platform check
+      if (Platform.isIOS) {
+        // iOS native flow - no need for webAuthenticationOptions
+        print("Using iOS native Apple Sign In flow");
+        final appleCredential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+        );
 
-  //     final oAuthProvider = OAuthProvider("apple.com").credential(
-  //       idToken: appleCredential.identityToken,
-  //       accessToken: appleCredential.authorizationCode,
-  //     );
-  //     return await _firebaseAuth.signInWithCredential(oAuthProvider);
-  //   } catch (e) {
-  //     print("Error Sign in with Apple: $e");
-  //     return null;
-  //   }
-  // }
+        print("Apple credential obtained - checking audience");
+
+        // Log token info to help debug audience issues
+        if (appleCredential.identityToken != null) {
+          try {
+            final parts = appleCredential.identityToken!.split('.');
+            if (parts.length > 1) {
+              // Base64 decode and print the payload
+              final payload =
+                  parts[1].replaceAll('-', '+').replaceAll('_', '/');
+              final normalized =
+                  payload.padRight((payload.length + 3) & ~3, '=');
+              final decodedBytes = base64Decode(normalized);
+              final decodedPayload = String.fromCharCodes(decodedBytes);
+              print("JWT payload: $decodedPayload");
+            }
+          } catch (e) {
+            print("Error decoding token: $e");
+          }
+        }
+
+        // Create Firebase credential
+        final oAuthProvider = OAuthProvider("apple.com").credential(
+          idToken: appleCredential.identityToken,
+          accessToken: appleCredential.authorizationCode,
+        );
+
+        // Sign in with Firebase
+        try {
+          final userCredential =
+              await _firebaseAuth.signInWithCredential(oAuthProvider);
+          await createCustomerInFirestore(userCredential.user);
+          return userCredential;
+        } catch (firebaseError) {
+          print("Firebase auth error: $firebaseError");
+          rethrow;
+        }
+      } else {
+        // Android/Web flow with webAuthenticationOptions
+        print("Using Android/Web Apple Sign In flow");
+        final appleCredential = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+          webAuthenticationOptions: WebAuthenticationOptions(
+            clientId: 'com.peasy.ios',
+            redirectUri: Uri.parse(
+                'https://peasy-8f59e.firebaseapp.com/__/auth/handler'),
+          ),
+        );
+
+        // Same token debugging as above
+        print("Apple credential obtained - checking audience");
+        if (appleCredential.identityToken != null) {
+          try {
+            final parts = appleCredential.identityToken!.split('.');
+            if (parts.length > 1) {
+              final payload =
+                  parts[1].replaceAll('-', '+').replaceAll('_', '/');
+              final normalized =
+                  payload.padRight((payload.length + 3) & ~3, '=');
+              final decodedBytes = base64Decode(normalized);
+              final decodedPayload = String.fromCharCodes(decodedBytes);
+              print("JWT payload: $decodedPayload");
+            }
+          } catch (e) {
+            print("Error decoding token: $e");
+          }
+        }
+
+        final oAuthProvider = OAuthProvider("apple.com").credential(
+          idToken: appleCredential.identityToken,
+          accessToken: appleCredential.authorizationCode,
+        );
+
+        try {
+          final userCredential =
+              await _firebaseAuth.signInWithCredential(oAuthProvider);
+          await createCustomerInFirestore(userCredential.user);
+          return userCredential;
+        } catch (firebaseError) {
+          print("Firebase auth error: $firebaseError");
+          rethrow;
+        }
+      }
+    } catch (e) {
+      print("Error Sign in with Apple: $e");
+      return null;
+    }
+  }
 
   // Firestore user data
   Future<void> createCustomerInFirestore(User? user) async {

@@ -20,7 +20,14 @@ class AuthButton extends StatelessWidget {
               const NavigationView(),
             );
           }
-        } else if (title == "Apple") {}
+        } else if (title == "Apple") {
+          final user = await AuthService().signInWithApple();
+          if (user != null) {
+            NavigationService.instance.navigateTo(
+              const NavigationView(),
+            );
+          }
+        }
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).colorScheme.tertiary,
