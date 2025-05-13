@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:peasy/core/components/general_background.dart';
 import 'package:peasy/core/components/general_sliver_appbar.dart';
 import 'package:peasy/core/components/general_text.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
-import 'package:peasy/core/widgets/background.dart';
 import 'package:peasy/features/category/viewmodel/category_view_model.dart';
 import 'package:peasy/features/category/widget/product_section_widget.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +22,7 @@ class CategoryView extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     return Stack(
       children: [
-        Background(),
+        GeneralBackground(),
         Consumer<CategoryViewModel>(
           builder: (context, viewModel, child) {
             return CustomScrollView(

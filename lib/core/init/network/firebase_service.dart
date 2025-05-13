@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:peasy/core/services/product/firestore_service_interface.dart';
+import 'package:peasy/core/init/network/firestore_service_interface.dart';
 
 class FirestoreService<T> implements FirestoreServiceInterface<T> {
   final String collectionPath;

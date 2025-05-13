@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:peasy/core/components/general_app_bar.dart';
+import 'package:peasy/core/components/general_background.dart';
+import 'package:peasy/core/components/general_button.dart';
 import 'package:peasy/core/components/general_text.dart';
+import 'package:peasy/core/constants/constants/general_constants.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
-import 'package:peasy/core/widgets/background.dart';
-import 'package:peasy/core/widgets/general_app_bar.dart';
-import 'package:peasy/core/widgets/main_button.dart';
 import 'package:peasy/features/cart/viewmodel/cart_view_model.dart';
 import 'package:peasy/features/cart/widget/cart_widget.dart';
 import 'package:provider/provider.dart';
@@ -15,51 +16,36 @@ class CartView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Background(),
+        GeneralBackground(),
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: GeneralAppBar(),
           body: Consumer<CartViewModel>(
             builder: (context, viewModel, child) {
               final cartItems = viewModel.cartItems;
-
               if (cartItems.isEmpty) {
                 return Center(child: Label(text: 'Your cart is empty'));
               }
-              return Column(
-                children: [
-                  Expanded(
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverPadding(
-                          padding: PaddingConstants.pagePadding,
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: CartWidget(cartItem: cartItems[index]),
-                                );
-                              },
-                              childCount: cartItems.length,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: PaddingConstants.pagePadding,
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: cartItems.length,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: CartWidget(cartItem: cartItems[index]),
+                          );
+                        },
+                      ),
+                      _buildButtons(context, viewModel),
+                    ],
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.01,
-                  ),
-                  _buildContinueButton(context),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.006,
-                  ),
-                  _buildClearCartButton(viewModel, context),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.095,
-                  ),
-                ],
+                ),
               );
             },
           ),
@@ -68,29 +54,36 @@ class CartView extends StatelessWidget {
     );
   }
 
+  Widget _buildButtons(BuildContext context, CartViewModel viewModel) {
+    return Row(
+      spacing: 8,
+      children: [
+        _buildContinueButton(context),
+        _buildClearCartButton(viewModel, context),
+      ],
+    );
+  }
+
   Widget _buildClearCartButton(CartViewModel viewModel, BuildContext context) {
-    return Padding(
-      padding: PaddingConstants.symmetricHorizontalMedium,
-      child: MainButton(
-        text: "Clear Cart",
-        onPressed: () {
-          viewModel.clearCart();
-        },
-        height: MediaQuery.of(context).size.height * 0.05,
-        color: Colors.transparent,
-        textColor: Theme.of(context).colorScheme.error,
+    return IconButton.filled(
+      icon: Icon(Icons.delete, color: Colors.white, size: 30),
+      onPressed: () {
+        viewModel.clearCart();
+      },
+      style: IconButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.error,
+        shape: RoundedRectangleBorder(
+          borderRadius: GeneralConstants.instance.borderRadiusSmall,
+        ),
+        fixedSize: const Size(50, 50),
       ),
     );
   }
 
   Widget _buildContinueButton(BuildContext context) {
-    return Padding(
-      padding: PaddingConstants.symmetricHorizontalMedium,
-      child: MainButton(
-        text: "Continue",
-        onPressed: () {},
-        height: MediaQuery.of(context).size.height * 0.05,
-      ),
+    return GeneralButton(
+      text: "Continue",
+      onPressed: () {},
     );
   }
 }

@@ -3,7 +3,7 @@ import 'package:peasy/core/components/general_divider.dart';
 import 'package:peasy/core/components/general_text.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
-import 'package:peasy/core/services/auth/auth_service.dart';
+import 'package:peasy/core/init/network/auth_service.dart';
 import 'package:peasy/features/cart/view/cart_view.dart';
 import 'package:peasy/features/home/view/home_view.dart';
 import 'package:peasy/features/navigation/viewmodel/navigation_view_model.dart';
