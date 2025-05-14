@@ -1,179 +1,211 @@
 import 'package:flutter/material.dart';
-import 'package:peasy/core/constants/enums/product_status_enum.dart';
+import 'package:peasy/core/init/network/product_service.dart';
 import 'package:peasy/features/category/model/product_model.dart';
+import 'package:peasy/features/home/model/subcategory_model.dart';
+import 'package:peasy/features/home/service/subcategory_service.dart';
 
 class CategoryViewModel extends ChangeNotifier {
+  final ProductService _productService = ProductService();
+  final SubcategoryService _subcategoryService = SubcategoryService();
+
   List<ProductModel> _products = [];
   List<ProductModel> get products => _products;
 
-  CategoryViewModel() {
-    _fetchProducts();
+  // Alt kategoriler listesi
+  List<SubcategoryModel> _subcategories = [];
+  List<SubcategoryModel> get subcategories => _subcategories;
+
+  // Mevcut kategori ID'si
+  String? _currentCategoryId;
+  String? get currentCategoryId => _currentCategoryId;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  bool _isLoadingSubcategories = false;
+  bool get isLoadingSubcategories => _isLoadingSubcategories;
+
+  // Ürünleri kategorilere göre gruplayacak map
+  Map<String, List<ProductModel>> _categorizedProducts = {};
+  Map<String, List<ProductModel>> get categorizedProducts =>
+      _categorizedProducts;
+
+  // Alt kategori ID'si
+  String? _selectedSubcategoryId;
+  String? get selectedSubcategoryId => _selectedSubcategoryId;
+
+  // Alt kategori isimlerini tutan map
+  final Map<String, String> _subcategoryNames = {};
+  Map<String, String> get subcategoryNames => _subcategoryNames;
+
+  // Seçili alt kategori adını döndür
+  String? get selectedSubcategoryName {
+    if (_selectedSubcategoryId == null) return null;
+
+    final selectedSubcategory = _subcategories.firstWhere(
+      (sub) => sub.id == _selectedSubcategoryId,
+      orElse: () => SubcategoryModel(
+          id: "", categoryId: "", title: "", imagePath: "", description: ""),
+    );
+
+    return selectedSubcategory.title.isNotEmpty
+        ? selectedSubcategory.title
+        : null;
   }
 
-  // Method to fetch products
-  void _fetchProducts() {
-    _products = [
-      ProductModel(
-        id: '00000001',
-        name: 'Apple',
-        section: 'A1',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '1.00',
-      ),
-      ProductModel(
-        id: '00000002',
-        name: 'Banana',
-        section: 'A2',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.outOfStock,
-        price: '2.00',
-      ),
-      ProductModel(
-        id: '00000003',
-        name: 'Carrot',
-        section: 'A3',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '3.00',
-      ),
-      ProductModel(
-        id: '00000004',
-        name: 'Milk',
-        section: 'B1',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '4.00',
-      ),
-      ProductModel(
-        id: '00000005',
-        name: 'Bread',
-        section: 'B2',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '5.00',
-      ),
-      ProductModel(
-        id: '00000006',
-        name: 'Eggs',
-        section: 'B3',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '6.00',
-      ),
-      ProductModel(
-        id: '00000007',
-        name: 'Cheese',
-        section: 'C1',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.outOfStock,
-        price: '7.00',
-      ),
-      ProductModel(
-        id: '00000008',
-        name: 'Tomato',
-        section: 'C2',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '8.00',
-      ),
-      ProductModel(
-        id: '00000009',
-        name: 'Potato',
-        section: 'C3',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '9.00',
-      ),
-      ProductModel(
-        id: '00000010',
-        name: 'Onion',
-        section: 'D1',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '10.00',
-      ),
-      ProductModel(
-        id: '00000011',
-        name: 'Garlic',
-        section: 'D2',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '11.00',
-      ),
-      ProductModel(
-        id: '00000012',
-        name: 'Ginger',
-        section: 'D3',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.outOfStock,
-        price: '12.00',
-      ),
-      ProductModel(
-        id: '00000013',
-        name: 'Orange',
-        section: 'E1',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '13.00',
-      ),
-      ProductModel(
-        id: '00000014',
-        name: 'Pineapple',
-        section: 'E2',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '14.00',
-      ),
-      ProductModel(
-        id: '00000015',
-        name: 'Strawberry',
-        section: 'E3',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '15.00',
-      ),
-      ProductModel(
-        id: '00000016',
-        name: 'Blueberry',
-        section: 'F1',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.outOfStock,
-        price: '16.00',
-      ),
-      ProductModel(
-        id: '00000017',
-        name: 'Peach',
-        section: 'F2',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '17.00',
-      ),
-      ProductModel(
-        id: '00000018',
-        name: 'Watermelon',
-        section: 'F3',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '18.00',
-      ),
-      ProductModel(
-        id: '00000019',
-        name: 'Lettuce',
-        section: 'G1',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '19.00',
-      ),
-      ProductModel(
-        id: '00000020',
-        name: 'Spinach',
-        section: 'G2',
-        imagePath: 'assets/images/product.png',
-        stockStatus: ProductStatusEnum.inStock,
-        price: '20.00',
-      ),
-    ];
+  /// Belirli bir kategoriye ait ürünleri ve alt kategorileri getirir
+  Future<void> loadCategoryData(String categoryId,
+      {String? subcategoryId}) async {
+    _currentCategoryId = categoryId;
+
+    // Kategori ürünlerini yükle
+    await fetchProductsByCategoryId(categoryId);
+
+    // Alt kategorileri yükle
+    await loadSubcategories(categoryId);
+
+    // Eğer bir alt kategori ID'si belirtilmişse, o alt kategoriye göre filtrele
+    if (subcategoryId != null) {
+      await filterProductsBySubcategory(subcategoryId);
+    }
+  }
+
+  /// Kategoriye ait alt kategorileri yükler
+  Future<void> loadSubcategories(String categoryId) async {
+    _setLoadingSubcategories(true);
+
+    try {
+      final allSubcategories = await _subcategoryService.getAllSubcategories();
+
+      // Kategori ID'sine göre filtrele
+      _subcategories = allSubcategories
+          .where((sub) => sub.categoryId == categoryId)
+          .toList();
+
+      // Alt kategori adlarını mapleyelim
+      for (var sub in _subcategories) {
+        _subcategoryNames[sub.id] = sub.title;
+      }
+    } catch (e) {
+      _subcategories = [];
+    }
+
+    _setLoadingSubcategories(false);
+  }
+
+  /// Belirli bir kategoriye ait ürünleri getirir
+  Future<void> fetchProductsByCategoryId(String categoryId) async {
+    _setLoading(true);
+    _selectedSubcategoryId = null; // Alt kategori seçimi sıfırlanıyor
+    _currentCategoryId = categoryId; // Kategorinin ID'sini kaydet
+
+    try {
+      _products = await _productService.getProducts(categoryId: categoryId);
+      _categorizeProducts();
+    } catch (e) {
+      _products = [];
+      _categorizedProducts = {};
+      notifyListeners();
+    }
+    _setLoading(false);
+  }
+
+  /// Belirli bir alt kategoriye ait ürünleri filtreler
+  Future<void> filterProductsBySubcategory(String subcategoryId) async {
+    _setLoading(true);
+    _selectedSubcategoryId = subcategoryId;
+
+    try {
+      // Eğer mevcut kategori ID'si varsa, o kategori ve alt kategori için ürünleri al
+      if (_currentCategoryId != null) {
+        _products = await _productService.getProducts(
+          categoryId: _currentCategoryId,
+          subcategoryId: subcategoryId,
+        );
+        // Ürün yoksa ve alt kategori ID'si varsa, Firestore'dan doğrudan alt kategoriye göre filtreleyelim
+        if (_products.isEmpty) {
+          _products =
+              await _productService.getProducts(subcategoryId: subcategoryId);
+        }
+      } else {
+        _products =
+            await _productService.getProducts(subcategoryId: subcategoryId);
+      }
+    } catch (e, stack) {
+      _products = [];
+      _categorizedProducts = {};
+      notifyListeners();
+    }
+
+    _setLoading(false);
+  }
+
+  /// Ürünleri kategorilere göre gruplar
+  void _categorizeProducts() {
+    _categorizedProducts = {};
+
+    // Ürün yoksa, boş map döndür
+    if (_products.isEmpty) {
+      notifyListeners();
+      return;
+    }
+
+    // Alt kategori seçilmişse ve o alt kategoriye ait ürünler varsa
+    if (_selectedSubcategoryId != null) {
+      // Seçilen alt kategoriye ait ürünleri filtrele
+      final filteredProducts = _products
+          .where((product) => product.subcategoryId == _selectedSubcategoryId)
+          .toList();
+
+      // Eğer filtrelenmiş ürünler varsa, onları göster
+      if (filteredProducts.isNotEmpty) {
+        _categorizedProducts[_selectedSubcategoryId!] = filteredProducts;
+      } else {
+        // Eğer filtrelenmiş ürün yoksa, section değerini kontrol etmeden tüm ürünleri göster
+        _categorizedProducts["products"] = _products;
+      }
+    } else {
+      // Alt kategori seçilmemişse, section'a göre ürünleri grupla
+      _categorizeProductsBySection();
+    }
+
     notifyListeners();
+  }
+
+  /// Ürünleri section'lara göre gruplar
+  void _categorizeProductsBySection() {
+    // Section'a göre gruplandır
+    final sectionGroups = <String, List<ProductModel>>{};
+
+    for (var product in _products) {
+      final section = product.subcategoryId.toString();
+
+      if (!sectionGroups.containsKey(section)) {
+        sectionGroups[section] = [];
+      }
+
+      sectionGroups[section]!.add(product);
+    }
+
+    // Eğer section'a göre gruplandırılmış ürün yoksa, tümünü "products" altında göster
+    if (sectionGroups.isEmpty) {
+      _categorizedProducts["products"] = _products;
+    } else {
+      _categorizedProducts = sectionGroups;
+    }
+  }
+
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void _setLoadingSubcategories(bool value) {
+    _isLoadingSubcategories = value;
+    notifyListeners();
+  }
+
+  String getSubcategoryName(String subcategoryId) {
+    return _subcategoryNames[subcategoryId] ?? 'Products';
   }
 }

@@ -3,33 +3,63 @@ import 'package:peasy/core/components/general_text.dart';
 import 'package:peasy/core/constants/constants/general_constants.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
+import 'package:peasy/features/category/view/category_view.dart';
 import 'package:peasy/features/home/model/subcategory_model.dart';
+import 'package:peasy/features/home/service/category_service.dart';
 
 /// A widget that represents a category item
 class CategoryWidget extends StatelessWidget {
-  final SubcategoryModel category;
+  final SubcategoryModel subcategoryModel;
 
-  const CategoryWidget({super.key, required this.category});
+  const CategoryWidget({super.key, required this.subcategoryModel});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 180,
-      padding: PaddingConstants.allMedium,
-      decoration: BoxDecoration(
-        color: context.surface,
-        borderRadius: GeneralConstants.instance.borderRadiusMedium,
-      ),
-      child: Column(
-        spacing: 4,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildCategoryImage(category.imagePath),
-          _buildCategoryTitle(category.title),
-          _buildCategoryDescription(context, category.description),
-        ],
+    return GestureDetector(
+      onTap: () => _navigateToSubcategoryProducts(context),
+      child: Container(
+        width: 180,
+        padding: PaddingConstants.allMedium,
+        decoration: BoxDecoration(
+          color: context.surface,
+          borderRadius: GeneralConstants.instance.borderRadiusMedium,
+        ),
+        child: Column(
+          spacing: 4,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildCategoryImage(subcategoryModel.imagePath),
+            _buildCategoryTitle(subcategoryModel.title),
+            _buildCategoryDescription(context, subcategoryModel.description),
+          ],
+        ),
       ),
     );
+  }
+
+  void _navigateToSubcategoryProducts(BuildContext context) async {
+    final String categoryId = subcategoryModel.categoryId;
+
+    // Bu alt kategori ID'si
+    final String subcategoryId = subcategoryModel.id;
+
+    // Ana kategoriyi getir
+    final categoryModel = await CategoryService().getCategoryById(categoryId);
+
+    if (categoryModel != null) {
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return CategoryView(
+              categoryModel: categoryModel,
+              subcategoryId: subcategoryId, // Alt kategori ID'sini geçiyoruz
+            );
+          },
+        ),
+      );
+    }
   }
 
   /// Builds the category image widget.
@@ -38,7 +68,7 @@ class CategoryWidget extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: GeneralConstants.instance.borderRadiusMedium,
-        color: Colors.amber.withValues(alpha: 0.4),
+        color: Colors.amber.withOpacity(0.4),
       ),
       child: Image.asset(imagePath),
     );

@@ -1,73 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:peasy/core/components/general_text.dart';
-import 'package:peasy/core/constants/constants/padding_constants.dart';
+import 'package:peasy/core/extensions/context_extension.dart';
 import 'package:peasy/features/category/model/product_model.dart';
+import 'package:peasy/features/category/viewmodel/category_view_model.dart';
 import 'package:peasy/features/category/widget/product_widget.dart';
+import 'package:peasy/features/home/model/category_model.dart';
+import 'package:provider/provider.dart';
 
 /// A widget that displays products organized by section
 class ProductSectionWidget extends StatelessWidget {
-  final String title;
-  final List<ProductModel> products;
+  final CategoryModel categoryModel;
 
   const ProductSectionWidget({
     super.key,
-    required this.title,
-    required this.products,
+    required this.categoryModel,
   });
 
   @override
   Widget build(BuildContext context) {
-    Map<String, List<ProductModel>> categorizedProducts = {};
-    for (var product in products) {
-      String section = product.section;
-      String category = section[0];
-      if (categorizedProducts.containsKey(category)) {
-        categorizedProducts[category]?.add(product);
-      } else {
-        categorizedProducts[category] = [product];
-      }
-    }
-    return SingleChildScrollView(
-      child: Column(
-        spacing: 16,
-        children: categorizedProducts.entries.map((entry) {
-          String sectionTitle = entry.key;
-          List<ProductModel> sectionProducts = entry.value;
-          return Column(
-            spacing: 8,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSectionTitle(sectionTitle),
-              _buildProductList(sectionProducts),
-            ],
+    return Consumer<CategoryViewModel>(
+      builder: (context, viewModel, child) {
+        if (viewModel.isLoading) {
+          return const SizedBox(
+            height: 300,
+            child: Center(child: CircularProgressIndicator()),
           );
-        }).toList(),
-      ),
+        }
+
+        if (viewModel.categorizedProducts.isEmpty) {
+          return SizedBox(
+            height: 300,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.shopping_bag_outlined,
+                    size: 64,
+                    color: context.secondary.withOpacity(0.5),
+                  ),
+                  const SizedBox(height: 16),
+                  Content(
+                    text: 'No products found',
+                    color: context.secondary,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            spacing: 24,
+            children: viewModel.categorizedProducts.entries.map((entry) {
+              String sectionKey = entry.key;
+              List<ProductModel> sectionProducts = entry.value;
+              return Column(
+                spacing: 16,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionTitle(viewModel, sectionKey),
+                  _buildProductList(context, sectionProducts),
+                ],
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 
-  Content _buildSectionTitle(String sectionTitle) {
+  Widget _buildSectionTitle(CategoryViewModel viewModel, String sectionKey) {
+    // ViewModel üzerinden alt kategori adını al
+    final sectionName = viewModel.getSubcategoryName(sectionKey);
+
     return Content(
-      text: 'SECTION $sectionTitle',
+      text: sectionName,
       isBold: true,
     );
   }
 
-  /// Builds the list of products for a section.
-  Widget _buildProductList(List<ProductModel> products) {
-    return ListView.builder(
-      padding: PaddingConstants.zeroPadding,
-      shrinkWrap: true,
-      clipBehavior: Clip.none,
-      itemCount: products.length,
-      physics: NeverScrollableScrollPhysics(),
-      itemBuilder: (BuildContext context, int index) {
-        final product = products[index];
-        return Padding(
-          padding: PaddingConstants.onlyBottomSmall,
+  /// Builds a responsive grid-like layout with 2 items per row using Wrap.
+  Widget _buildProductList(BuildContext context, List<ProductModel> products) {
+    final double itemWidth = (context.width - 3 * 16) / 2;
+    return Wrap(
+      spacing: 16,
+      runSpacing: 16,
+      children: products.map((product) {
+        return SizedBox(
+          width: itemWidth,
           child: ProductWidget(product: product),
         );
-      },
+      }).toList(),
     );
   }
 }

@@ -9,7 +9,7 @@ import 'package:peasy/features/home/model/subcategory_model.dart';
 import 'package:peasy/features/home/widget/category_widget.dart';
 
 /// A widget that represents a section with categories
-class CategorySectionWidget extends StatelessWidget {
+class CategorySectionWidget extends StatefulWidget {
   final CategoryModel categoryModel;
   final List<SubcategoryModel> subcategories;
   const CategorySectionWidget({
@@ -19,30 +19,37 @@ class CategorySectionWidget extends StatelessWidget {
   });
 
   @override
+  State<CategorySectionWidget> createState() => _CategorySectionWidgetState();
+}
+
+class _CategorySectionWidgetState extends State<CategorySectionWidget> {
+  @override
   Widget build(BuildContext context) {
     return Column(
       spacing: 16,
       children: [
-        _buildCategoryTitle(context, categoryModel.name),
-        _buildSubcategoryList(subcategories),
+        _buildCategoryTitle(context, widget.categoryModel),
+        _buildSubcategoryList(widget.subcategories),
       ],
     );
   }
 
   /// Builds a section title widget.
-  Widget _buildCategoryTitle(BuildContext context, String title) {
+  Widget _buildCategoryTitle(
+      BuildContext context, CategoryModel categoryModel) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Content(
-          text: title,
+          text: categoryModel.name,
         ),
         GestureDetector(
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => CategoryView(categoryTitle: title),
+                builder: (context) =>
+                    CategoryView(categoryModel: categoryModel),
               ),
             );
           },
@@ -68,7 +75,7 @@ class CategorySectionWidget extends StatelessWidget {
           final subcategory = subcategories[index];
           return Padding(
             padding: PaddingConstants.onlyRightSmall,
-            child: CategoryWidget(category: subcategory),
+            child: CategoryWidget(subcategoryModel: subcategory),
           );
         },
       ),

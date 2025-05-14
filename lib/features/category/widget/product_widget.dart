@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:peasy/core/components/general_tag.dart';
 import 'package:peasy/core/components/general_text.dart';
 import 'package:peasy/core/constants/constants/general_constants.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/constants/enums/product_status_enum.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
 import 'package:peasy/features/category/model/product_model.dart';
+import 'package:peasy/features/product/view/product_view.dart';
 
 /// A widget that represents a product item
 class ProductWidget extends StatelessWidget {
@@ -15,79 +15,80 @@ class ProductWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: PaddingConstants.allSmall,
-      decoration: BoxDecoration(
-        color: context.surface,
-        borderRadius: GeneralConstants.instance.borderRadiusMedium,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildProductInfo(product, context),
-          _buildProductSectionChip(
-              product.section, product.stockStatus, context),
-          _buildProductStockChip(product.stockStatus, context),
-          _buildProductPrice(product.price, context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProductInfo(ProductModel product, BuildContext context) {
-    return Row(
-      spacing: 8,
-      children: [
-        _buildProductImage(product.imagePath),
-        Column(
+    return GestureDetector(
+      onTap: () => _navigateToProductDetail(context),
+      child: Container(
+        width: 180,
+        padding: PaddingConstants.allMedium,
+        decoration: BoxDecoration(
+          color: context.surface,
+          borderRadius: GeneralConstants.instance.borderRadiusMedium,
+        ),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildProductTitle(product.name),
-            _buildProductId(context, product.id),
+            // _buildProductImage(product.imagePath),
+            const SizedBox(height: 8),
+            _buildProductTitle(product.name ?? ''),
+            const SizedBox(height: 4),
+            _buildProductPrice(product.price),
+            const SizedBox(height: 4),
+            _buildProductStockStatus(product.stock),
           ],
         ),
-      ],
+      ),
     );
   }
 
-  /// Builds the product image widget.
-  Widget _buildProductImage(String imagePath) {
-    return Image.asset(imagePath);
-  }
-
-  /// Builds the product section chip widget using GeneralTag.
-  Widget _buildProductSectionChip(String sectionNumber,
-      ProductStatusEnum stockStatus, BuildContext context) {
-    return GeneralTag(label: sectionNumber, color: context.primary);
-  }
-
-  /// Builds the product stock chip widget using GeneralTag.
-  Widget _buildProductStockChip(
-      ProductStatusEnum stockStatus, BuildContext context) {
-    return GeneralTag(label: stockStatus.name, color: stockStatus.color);
-  }
-
-  /// Builds the product price widget.
-  Widget _buildProductPrice(String price, BuildContext context) {
-    return Helper(
-      text: '\$$price',
-      color: context.onSurface,
+  void _navigateToProductDetail(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProductDetailView(product: product),
+      ),
     );
   }
 
-  /// Builds the product title widget.
+  Widget _buildProductImage(String? imagePath) {
+    return Container(
+      width: double.infinity,
+      height: 100,
+      decoration: BoxDecoration(
+        borderRadius: GeneralConstants.instance.borderRadiusMedium,
+        color: Colors.grey.shade200,
+      ),
+      child: imagePath != null
+          ? ClipRRect(
+              borderRadius: GeneralConstants.instance.borderRadiusMedium,
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+              ),
+            )
+          : const Icon(Icons.image_not_supported),
+    );
+  }
+
   Widget _buildProductTitle(String title) {
     return Helper(
       text: title,
+      isBold: true,
     );
   }
 
-  /// Builds the product ID widget.
-  Widget _buildProductId(BuildContext context, String id) {
+  Widget _buildProductPrice(double? price) {
     return Label(
-      text: id,
-      color: context.secondary,
+      text: price != null ? '\$${price.toStringAsFixed(2)}' : 'N/A',
+    );
+  }
+
+  Widget _buildProductStockStatus(int? stock) {
+    final quantity = stock ?? 0;
+    final status = getStockStatusFromQuantity(quantity);
+
+    return Label(
+      text: status.name,
+      color: status.color,
     );
   }
 }
