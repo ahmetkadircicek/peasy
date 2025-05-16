@@ -4,6 +4,8 @@ import 'package:peasy/core/constants/constants/general_constants.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
 import 'package:peasy/features/cart/model/cart_model.dart';
+import 'package:peasy/features/cart/viewmodel/cart_view_model.dart';
+import 'package:provider/provider.dart';
 
 class CartWidget extends StatelessWidget {
   final CartModel cartItem;
@@ -12,71 +14,186 @@ class CartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: PaddingConstants.allSmall,
+      width: double.infinity,
+      margin: PaddingConstants.onlyBottomSmall,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: context.surface,
         borderRadius: GeneralConstants.instance.borderRadiusMedium,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        spacing: 8,
         children: [
-          _buildCartItemInfo(cartItem, context),
-          _buildCartItemPrice(cartItem.price, context),
-          _buildCartItemQuantity(cartItem.quantity, context),
-          _buildCartItemTotalPrice(cartItem.totalPrice, context),
+          _buildProductImage(context),
+          Expanded(child: _buildName(context)),
+          Expanded(child: _buildQuantity(context)),
+          _buildQuantityControls(context),
         ],
       ),
     );
   }
 
-  Widget _buildCartItemInfo(CartModel item, BuildContext context) {
+  Row _buildQuantity(BuildContext context) {
     return Row(
-      spacing: 8,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildCartItemImage(item.imagePath),
+        // Fiyat Bilgisi
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildCartItemTitle(item.name),
-            _buildCartItemId(context, item.id),
+            Content(
+              text: '₺${cartItem.totalPrice.toStringAsFixed(2)}',
+              color: context.primary,
+              isBold: true,
+            ),
+            if (cartItem.quantity > 1)
+              Label(
+                text:
+                    '${cartItem.quantity}x ₺${cartItem.price.toStringAsFixed(2)}',
+                color: context.onSurface.withOpacity(0.6),
+              ),
+          ],
+        ),
+        // Miktar Kontrolleri
+      ],
+    );
+  }
+
+  Row _buildName(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Content(
+              text: cartItem.name,
+              isBold: true,
+              maxLines: 1,
+            ),
+            if (cartItem.description != null)
+              Label(
+                text: cartItem.description!,
+                color: context.onSurface.withOpacity(0.6),
+                maxLines: 1,
+              ),
           ],
         ),
       ],
     );
   }
 
-  /// Builds the product image widget.
-  Widget _buildCartItemImage(String imagePath) {
-    return Image.asset(imagePath);
-  }
-
-  /// Builds the product ID widget.
-  Widget _buildCartItemId(BuildContext context, String id) {
-    return Label(
-      text: id,
-      color: context.secondary,
+  // Ürün Resmi
+  Widget _buildProductImage(BuildContext context) {
+    return Container(
+      width: 50,
+      height: 50,
+      margin: PaddingConstants.onlyLeftSmall,
+      decoration: BoxDecoration(
+        borderRadius: GeneralConstants.instance.borderRadiusMedium,
+        image: DecorationImage(
+          image: AssetImage(cartItem.imagePath),
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 
-  Widget _buildCartItemTitle(String title) {
-    return Helper(text: title);
+  // // Kaldır Butonu
+  // Widget _buildRemoveButton(BuildContext context) {
+  //   return IconButton(
+  //     icon: Icon(
+  //       Icons.delete_outline,
+  //       color: Theme.of(context).colorScheme.error,
+  //     ),
+  //     onPressed: () {
+  //       // Onay iletişim kutusu göster
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //           title: const Text('Ürünü Kaldır'),
+  //           content: Text(
+  //               '${cartItem.name} ürününü sepetten kaldırmak istediğinizden emin misiniz?'),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(context),
+  //               child: const Text('İptal'),
+  //             ),
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //                 context.read<CartViewModel>().removeItem(cartItem.id);
+  //               },
+  //               child: Text(
+  //                 'Kaldır',
+  //                 style: TextStyle(color: Theme.of(context).colorScheme.error),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  // Miktar Kontrolleri
+  Widget _buildQuantityControls(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: context.primary,
+      ),
+      child: Column(
+        children: [
+          // Artır Butonu
+          _buildQuantityButton(
+            context,
+            icon: Icons.add,
+            onPressed: () {
+              context.read<CartViewModel>().incrementQuantity(cartItem.id);
+            },
+          ),
+          // Miktar
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              '${cartItem.quantity}',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: context.onPrimary,
+              ),
+            ),
+          ),
+          // Azalt Butonu
+          _buildQuantityButton(
+            context,
+            icon: Icons.remove,
+            onPressed: () {
+              context.read<CartViewModel>().decrementQuantity(cartItem.id);
+            },
+          ),
+        ],
+      ),
+    );
   }
 
-  /// Builds the product quantity widget.
-  Widget _buildCartItemQuantity(int quantity, BuildContext context) {
-    return Helper(text: quantity.toString(), color: context.primary);
-  }
-
-  /// Builds the product price widget.
-  Widget _buildCartItemPrice(double price, BuildContext context) {
-    return Helper(
-        text: '\$${price.toStringAsFixed(2)}', color: context.primary);
-  }
-
-  /// Builds the product total price widget.
-  Widget _buildCartItemTotalPrice(double totalPrice, BuildContext context) {
-    return Helper(
-        text: '\$${totalPrice.toStringAsFixed(2)}', color: context.primary);
+  // Miktar Butonu
+  Widget _buildQuantityButton(
+    BuildContext context, {
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+          icon,
+          size: 18,
+          color: context.onPrimary,
+        ),
+      ),
+    );
   }
 }
