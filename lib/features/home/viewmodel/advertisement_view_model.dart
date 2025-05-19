@@ -1,16 +1,18 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/material.dart';
 
 class AdvertisementViewModel extends ChangeNotifier {
   final _pageController = PageController();
   List<String> _imagePaths = [];
   int _currentIndex = 0;
   bool _isInitialized = false;
-  Timer? _autoChangeTimer;
+  bool _isLoaded = false;
 
   List<String> get imagePaths => _imagePaths;
   int get currentIndex => _currentIndex;
   PageController get pageController => _pageController;
+  bool get isLoaded => _isLoaded;
 
   AdvertisementViewModel() {
     _initialize();
@@ -22,31 +24,24 @@ class AdvertisementViewModel extends ChangeNotifier {
     _isInitialized = true;
   }
 
-  void _startAutoChange() {
-    _autoChangeTimer?.cancel();
-    _autoChangeTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (_imagePaths.isNotEmpty) {
-        _currentIndex = (_currentIndex + 1) % _imagePaths.length;
-        notifyListeners();
-      }
-    });
-  }
-
   @override
   void dispose() {
-    _autoChangeTimer?.cancel();
     _pageController.dispose();
     super.dispose();
   }
 
   Future<void> fetchAdvertisements() async {
+    // Simulate a fake service call with a delay
+    _isLoaded = false;
+    notifyListeners();
+    await Future.delayed(const Duration(seconds: 3));
     _imagePaths = [
       'assets/images/01_advertisement.png',
       'assets/images/03_advertisement.png',
       'assets/images/02_advertisement.png',
     ];
+    _isLoaded = true;
     notifyListeners();
-    _startAutoChange();
   }
 
   void onPageChanged(int index) {

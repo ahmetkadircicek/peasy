@@ -7,36 +7,39 @@ import 'package:peasy/features/home/service/subcategory_service.dart';
 class HomeViewModel extends ChangeNotifier {
   List<CategoryModel> _categories = [];
   List<SubcategoryModel> _subcategories = [];
+  bool _isLoading = false;
+
   List<CategoryModel> get categories => _categories;
   List<SubcategoryModel> get subcategories => _subcategories;
+  bool get isLoading => _isLoading;
 
   HomeViewModel() {
-    _fetchSections();
-    _fetchSubcategories();
+    _fetchData();
   }
 
-  void _fetchSections() async {
+  Future<void> _fetchData() async {
+    _setLoading(true);
+    await Future.wait([
+      _fetchSections(),
+      _fetchSubcategories(),
+    ]);
+    _setLoading(false);
+  }
+
+  Future<void> _fetchSections() async {
     final categories = await CategoryService().getAllCategories();
-    _categories = categories.map((category) {
-      return CategoryModel(
-        id: category.id,
-        name: category.name,
-      );
-    }).toList();
+    _categories = categories;
     notifyListeners();
   }
 
-  void _fetchSubcategories() async {
+  Future<void> _fetchSubcategories() async {
     final subcategories = await SubcategoryService().getAllSubcategories();
-    _subcategories = subcategories.map((subcategory) {
-      return SubcategoryModel(
-        id: subcategory.id,
-        categoryId: subcategory.categoryId,
-        title: subcategory.title,
-        imagePath: subcategory.imagePath,
-        description: subcategory.description,
-      );
-    }).toList();
+    _subcategories = subcategories;
+    notifyListeners();
+  }
+
+  void _setLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 

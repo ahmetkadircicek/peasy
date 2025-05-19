@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peasy/core/components/general_skeleton.dart';
 import 'package:peasy/core/constants/constants/general_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
 import 'package:peasy/features/home/viewmodel/advertisement_view_model.dart';
@@ -20,23 +21,14 @@ class AdvertisementWidget extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Container(
+    return GeneralSkeleton(
       height: 240,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: GeneralConstants.instance.borderRadiusMedium,
-      ),
-      child: Center(
-        child: Icon(
-          Icons.image_not_supported,
-          color: context.secondary,
-          size: 32,
-        ),
-      ),
+      width: double.infinity,
     );
   }
 
-  Widget _buildAdvertisementCarousel(BuildContext context, AdvertisementViewModel viewModel) {
+  Widget _buildAdvertisementCarousel(
+      BuildContext context, AdvertisementViewModel viewModel) {
     return Container(
       height: 240,
       clipBehavior: Clip.antiAlias,
@@ -69,7 +61,8 @@ class AdvertisementWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildPageIndicator(BuildContext context, AdvertisementViewModel viewModel) {
+  Widget _buildPageIndicator(
+      BuildContext context, AdvertisementViewModel viewModel) {
     return Positioned(
       bottom: 10,
       left: 0,
@@ -84,7 +77,9 @@ class AdvertisementWidget extends StatelessWidget {
             height: 8,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: viewModel.currentIndex == index ? context.surface : context.secondary,
+              color: viewModel.currentIndex == index
+                  ? context.surface
+                  : context.secondary,
             ),
           ),
         ),

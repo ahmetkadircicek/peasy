@@ -5,6 +5,7 @@ import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
 import 'package:peasy/features/home/viewmodel/home_view_model.dart';
 import 'package:peasy/features/home/widget/advertisement_widget.dart';
+import 'package:peasy/features/home/widget/category_section_skeleton_widget.dart';
 import 'package:peasy/features/home/widget/category_section_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -109,13 +110,15 @@ class HomeView extends StatelessWidget {
       builder: (context, homeViewModel, child) {
         return Column(
           spacing: 20,
-          children: homeViewModel.categories.map((section) {
-            return CategorySectionWidget(
-              categoryModel: section,
-              subcategories:
-                  homeViewModel.getSubcategoriesForCategory(section.id),
-            );
-          }).toList(),
+          children: homeViewModel.isLoading
+              ? List.generate(7, (_) => const CategorySectionSkeletonWidget())
+              : homeViewModel.categories.map((category) {
+                  return CategorySectionWidget(
+                    categoryModel: category,
+                    subcategories:
+                        homeViewModel.getSubcategoriesForCategory(category.id),
+                  );
+                }).toList(),
         );
       },
     );
