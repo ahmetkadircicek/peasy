@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class Background extends StatelessWidget {
-  const Background({
+class GeneralBackground extends StatelessWidget {
+  const GeneralBackground({
     super.key,
   });
 

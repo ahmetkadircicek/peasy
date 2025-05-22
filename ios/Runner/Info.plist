@@ -21,37 +21,6 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-<<<<<<< HEAD
-	
-	<!-- GIDClientID -->
-	<key>GIDClientID</key>
-	<string>154307594725-2io7sapvepl8o823fd7lgbkt6lokl2ag.apps.googleusercontent.com</string>
-	
-	<!-- Google Sign-In URL Types -->
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.154307594725-2io7sapvepl8o823fd7lgbkt6lokl2ag</string>
-			</array>
-		</dict>
-	</array>
-
-	<!-- Google Application Queries -->
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>google</string>
-		<string>com.google.chrome.ios</string>
-		<string>googlechromes</string>
-		<string>com.google.gppconsent</string>
-		<string>com.google.gppconsent.2.0</string>
-	</array>
-
-=======
->>>>>>> 99726b8 (feat(auth): implement Apple sign-in and update iOS project configurations)
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -68,8 +37,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-<<<<<<< HEAD
-=======
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -77,6 +44,12 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
->>>>>>> 99726b8 (feat(auth): implement Apple sign-in and update iOS project configurations)
+	<key>NFCReaderUsageDescription</key>
+	<string>Uygulama ürünleri taramak için NFC kullanmak istiyor.</string>
+	<key>com.apple.developer.nfc.readersession.formats</key>
+	<array>
+		<string>NDEF</string>
+		<string>TAG</string>
+	</array>
 </dict>
 </plist>

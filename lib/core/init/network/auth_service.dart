@@ -22,7 +22,7 @@ class AuthService {
   }
 
   // Google sign in
-  Future<UserCredential?> signInWithGoogle() async {
+  Future<UserCredential?> loginWithGoogle() async {
     try {
       // Begin interactive sign-in process
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -57,7 +57,7 @@ class AuthService {
   }
 
   // Apple login Method
-  Future<UserCredential?> signInWithApple() async {
+  Future<UserCredential?> loginWithApple() async {
     try {
       // Use proper platform check
       if (Platform.isIOS) {
