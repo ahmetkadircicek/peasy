@@ -20,6 +20,9 @@ dependencies:
   google_sign_in: ^6.3.0
   sign_in_with_apple: ^7.0.1
   cloud_firestore: ^5.6.6
+  flutter_nfc_kit: ^3.6.0
+  shimmer: ^3.0.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
