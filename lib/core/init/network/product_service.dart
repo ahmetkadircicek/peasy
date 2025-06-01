@@ -30,4 +30,20 @@ class ProductService {
       rethrow;
     }
   }
+
+  Future<String> getCategoryNameById(int? categoryId) async {
+    if (categoryId == null) return 'Diğer';
+
+    final doc = await FirebaseFirestore.instance
+        .collection('Categories')
+        .doc(categoryId
+            .toString()) // Eğer doküman ID olarak categoryId kullanılıyorsa
+        .get();
+
+    if (doc.exists) {
+      return doc.data()?['name'] ?? 'Diğer';
+    } else {
+      return 'Diğer';
+    }
+  }
 }

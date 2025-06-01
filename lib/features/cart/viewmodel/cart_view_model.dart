@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:peasy/core/init/network/category_service.dart';
 import 'package:peasy/features/cart/model/cart_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CartViewModel extends ChangeNotifier {
+  final CategoryService _categoryService = CategoryService();
   List<CartModel> _cartItems = [];
   List<CartModel> get cartItems => _cartItems;
 
@@ -14,7 +17,7 @@ class CartViewModel extends ChangeNotifier {
   bool _isExpanded = false;
   bool get isExpanded => _isExpanded;
 
-  // Sepet özeti bilgileri
+  // Sepet bilgileri (özet)
   int get itemCount => _cartItems.length;
   int get totalItems => _cartItems.fold(0, (sum, item) => sum + item.quantity);
   double get subtotal =>
@@ -23,22 +26,17 @@ class CartViewModel extends ChangeNotifier {
   double get shipping => subtotal > 100 ? 0 : 10;
   double get total => subtotal + tax + shipping;
 
-  // Kategoriye göre gruplandırılmış ürünler
+  // Ürünleri kategori bazında gruplandır
   Map<String, List<CartModel>> get groupedItems {
     final Map<String, List<CartModel>> grouped = {};
-
     for (var item in _cartItems) {
-      final category = item.category ?? 'Diğer';
-      if (!grouped.containsKey(category)) {
-        grouped[category] = [];
-      }
-      grouped[category]!.add(item);
+      final category = item.categoryName ?? 'Diğer';
+      grouped.putIfAbsent(category, () => []);
     }
-
     return grouped;
   }
 
-  // Constructor ile ürün ekleyebilme
+  // Constructor: Başlangıç ürünleri varsa ekle, yoksa önbellekten yükle
   CartViewModel({List<CartModel>? initialItems}) {
     if (initialItems != null && initialItems.isNotEmpty) {
       _addInitialItems(initialItems);
@@ -47,182 +45,106 @@ class CartViewModel extends ChangeNotifier {
     }
   }
 
-  // Constructor ile gelen ürünleri ekle
-  void _addInitialItems(List<CartModel> items) async {
-    _setLoading(true);
+  /// 🔥 Yeni: CartModel'lere categoryName eşlemesi yap
+  Future<void> enrichCartItemsWithCategoryNames() async {
+    for (var item in _cartItems) {
+      if (item.categoryName == null && item.categoryId != null) {
+        final category =
+            await _categoryService.getCategoryById(item.categoryId!.toString());
+        item.categoryName = category?.name ?? 'Diğer';
+      }
+    }
+    notifyListeners();
+  }
 
-    // Mevcut sepeti yükle
+  // Başlangıç ürünlerini ekle
+  Future<void> _addInitialItems(List<CartModel> items) async {
+    _setLoading(true);
     try {
       final prefs = await SharedPreferences.getInstance();
       final cartData = prefs.getString('cart');
-
       if (cartData != null) {
-        final List<dynamic> decodedData = jsonDecode(cartData);
-        _cartItems =
-            decodedData.map((item) => CartModel.fromJson(item)).toList();
+        final List<dynamic> decoded = jsonDecode(cartData);
+        _cartItems = decoded.map((e) => CartModel.fromJson(e)).toList();
       } else {
         _cartItems = [];
       }
-
-      // Yeni ürünleri ekle
       for (var item in items) {
         addItem(item);
       }
     } catch (e) {
       debugPrint('Sepet yüklenirken hata: $e');
-
-      // Hata durumunda doğrudan ekle
       _cartItems = List.from(items);
-      _saveCartItems();
+      await _saveCartItems();
     }
-
     _setLoading(false);
   }
 
-  // Sepet durumunu genişlet/daralt
+  // Sepet görünümünü genişlet/daralt
   void toggleExpanded() {
     _isExpanded = !_isExpanded;
     notifyListeners();
   }
 
-  // Sepeti yükle
+  // Sepet ürünlerini SharedPreferences'tan yükle
   Future<void> loadCartItems() async {
     _setLoading(true);
-
     try {
       final prefs = await SharedPreferences.getInstance();
       final cartData = prefs.getString('cart');
-
       if (cartData != null) {
-        final List<dynamic> decodedData = jsonDecode(cartData);
-        _cartItems =
-            decodedData.map((item) => CartModel.fromJson(item)).toList();
+        final List<dynamic> decoded = jsonDecode(cartData);
+        _cartItems = decoded.map((e) => CartModel.fromJson(e)).toList();
       } else {
-        // Demo veriler (gerçek uygulamada kaldırılacak)
-        _loadDemoItems();
+        _cartItems = [];
       }
     } catch (e) {
       debugPrint('Sepet yüklenirken hata: $e');
-      _loadDemoItems();
+      _cartItems = [];
     }
-
     _setLoading(false);
   }
 
-  // Sepeti kaydet
+  // Sepeti SharedPreferences'a kaydet
   Future<void> _saveCartItems() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final cartData =
-          jsonEncode(_cartItems.map((item) => item.toJson()).toList());
-      await prefs.setString('cart', cartData);
+      final String encoded =
+          jsonEncode(_cartItems.map((e) => e.toJson()).toList());
+      await prefs.setString('cart', encoded);
     } catch (e) {
       debugPrint('Sepet kaydedilirken hata: $e');
     }
   }
 
-  // Ürün ekle
+  // Sepete ürün ekle (aynı ürün varsa tekrar eklenmez)
   void addItem(CartModel item) {
-    final existingItemIndex =
-        _cartItems.indexWhere((cartItem) => cartItem.id == item.id);
-
-    if (existingItemIndex >= 0) {
-      // Ürün zaten sepette, miktarı artır
-      _cartItems[existingItemIndex].incrementQuantity();
-    } else {
-      // Yeni ürün ekle
+    final exists =
+        _cartItems.any((element) => element.productId == item.productId);
+    if (!exists) {
       _cartItems.add(item);
-    }
-
-    _saveCartItems();
-    notifyListeners();
-  }
-
-  // Ürün miktarını artır
-  void incrementQuantity(String itemId) {
-    final index = _cartItems.indexWhere((item) => item.id == itemId);
-    if (index >= 0) {
-      _cartItems[index].incrementQuantity();
       _saveCartItems();
       notifyListeners();
     }
   }
 
-  // Ürün miktarını azalt
-  void decrementQuantity(String itemId) {
-    final index = _cartItems.indexWhere((item) => item.id == itemId);
-    if (index >= 0) {
-      if (_cartItems[index].quantity > 1) {
-        _cartItems[index].decrementQuantity();
-      } else {
-        // Miktar 1'e düştüyse ürünü kaldır
-        removeItem(itemId);
-        return;
-      }
-      _saveCartItems();
-      notifyListeners();
-    }
-  }
-
-  // Ürünü kaldır
-  void removeItem(String itemId) {
-    _cartItems.removeWhere((item) => item.id == itemId);
+  // Sepetten ürün çıkar (id'ye göre)
+  void removeItem(String productId) {
+    _cartItems.removeWhere((item) => item.productId == productId);
     _saveCartItems();
     notifyListeners();
   }
 
-  // Sepeti temizle
+  // Sepeti tamamen temizle
   void clearCart() {
     _cartItems.clear();
     _saveCartItems();
     notifyListeners();
   }
 
-  // Yükleme durumunu ayarla
+  // Yükleme durumunu ayarla ve dinleyicilere bildir
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
-  }
-
-  // Demo veriler (gerçek uygulamada kaldırılacak)
-  void _loadDemoItems() {
-    _cartItems = [
-      CartModel(
-        id: '1',
-        imagePath: 'assets/images/product.png',
-        name: 'Organik Elma',
-        price: 12.90,
-        quantity: 2,
-        category: 'Meyve & Sebze',
-        description: 'Taze organik elma, kg başına fiyat',
-      ),
-      CartModel(
-        id: '2',
-        imagePath: 'assets/images/product.png',
-        name: 'Tam Yağlı Süt',
-        price: 15.50,
-        quantity: 1,
-        category: 'Süt Ürünleri',
-        description: '1 litre kutu süt',
-      ),
-      CartModel(
-        id: '3',
-        imagePath: 'assets/images/product.png',
-        name: 'Tam Buğday Ekmeği',
-        price: 8.75,
-        quantity: 1,
-        category: 'Fırın Ürünleri',
-        description: '500g tam buğday ekmeği',
-      ),
-      CartModel(
-        id: '4',
-        imagePath: 'assets/images/product.png',
-        name: 'Zeytinyağı',
-        price: 120.00,
-        quantity: 1,
-        category: 'Yağ & Sos',
-        description: '1 litre sızma zeytinyağı',
-      ),
-    ];
   }
 }

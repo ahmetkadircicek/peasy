@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:peasy/core/init/network/product_service.dart';
+import 'package:peasy/core/init/network/subcategory_service.dart';
 import 'package:peasy/features/category/model/product_model.dart';
 import 'package:peasy/features/home/model/subcategory_model.dart';
-import 'package:peasy/features/home/service/subcategory_service.dart';
 
 class CategoryViewModel extends ChangeNotifier {
   final ProductService _productService = ProductService();
@@ -131,7 +131,7 @@ class CategoryViewModel extends ChangeNotifier {
         _products =
             await _productService.getProducts(subcategoryId: subcategoryId);
       }
-    } catch (e, stack) {
+    } catch (e) {
       _products = [];
       _categorizedProducts = {};
       notifyListeners();

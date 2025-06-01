@@ -1,4 +1,5 @@
 class ProductModel {
+  String? productId; // Firestore document ID olarak eklendi
   int? categoryId;
   String? description;
   String? name;
@@ -7,38 +8,47 @@ class ProductModel {
   double? salePrice;
   int? stock;
   int? subcategoryId;
+  String? imgPath; // Burada ekledik
 
-  ProductModel(
-      {this.categoryId,
-      this.description,
-      this.name,
-      this.price,
-      this.rating,
-      this.salePrice,
-      this.stock,
-      this.subcategoryId});
+  ProductModel({
+    this.productId,
+    this.categoryId,
+    this.description,
+    this.name,
+    this.price,
+    this.rating,
+    this.salePrice,
+    this.stock,
+    this.subcategoryId,
+    this.imgPath, // constructor parametresi
+  });
 
-  ProductModel.fromJson(Map<String, dynamic> json) {
-    categoryId = json['categoryId'];
-    description = json['description'];
-    name = json['name'];
-    price = json['price'];
-    rating = json['rating'];
-    salePrice = json['salePrice'];
-    stock = json['stock'];
-    subcategoryId = json['subcategoryId'];
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      productId: json['productId'],
+      categoryId: json['categoryId'],
+      description: json['description'],
+      name: json['name'],
+      price: (json['price'] ?? 0).toDouble(),
+      rating: (json['rating'] ?? 0).toDouble(),
+      salePrice: (json['salePrice'] ?? 0).toDouble(),
+      stock: json['stock'],
+      subcategoryId: json['subcategoryId'],
+      imgPath: json['imgPath'], // Burayı ekledik
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['categoryId'] = categoryId;
-    data['description'] = description;
-    data['name'] = name;
-    data['price'] = price;
-    data['rating'] = rating;
-    data['salePrice'] = salePrice;
-    data['stock'] = stock;
-    data['subcategoryId'] = subcategoryId;
-    return data;
+    return {
+      'categoryId': categoryId,
+      'description': description,
+      'name': name,
+      'price': price,
+      'rating': rating,
+      'salePrice': salePrice,
+      'stock': stock,
+      'subcategoryId': subcategoryId,
+      'imgPath': imgPath, // Burayı ekledik
+    };
   }
 }

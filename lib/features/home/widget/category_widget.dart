@@ -3,9 +3,9 @@ import 'package:peasy/core/components/general_text.dart';
 import 'package:peasy/core/constants/constants/general_constants.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
+import 'package:peasy/core/init/network/category_service.dart';
 import 'package:peasy/features/category/view/category_view.dart';
 import 'package:peasy/features/home/model/subcategory_model.dart';
-import 'package:peasy/features/home/service/category_service.dart';
 
 /// A widget that represents a category item
 class CategoryWidget extends StatelessWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:peasy/core/init/network/category_service.dart';
+import 'package:peasy/core/init/network/subcategory_service.dart';
 import 'package:peasy/features/home/model/category_model.dart';
 import 'package:peasy/features/home/model/subcategory_model.dart';
-import 'package:peasy/features/home/service/category_service.dart';
-import 'package:peasy/features/home/service/subcategory_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
   List<CategoryModel> _categories = [];

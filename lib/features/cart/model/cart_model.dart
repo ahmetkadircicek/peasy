@@ -1,80 +1,87 @@
+import 'package:peasy/features/category/model/product_model.dart';
+
 class CartModel {
-  final String id;
-  final String imagePath;
-  final String name;
-  final double price;
-  int quantity;
+  final String? productId;
+  final String? name;
   final String? description;
-  final String? category;
+  final int? categoryId;
+  final double? price;
+  final String? imgPath;
+  int quantity;
+  String? categoryName;
 
   CartModel({
-    required this.id,
-    required this.imagePath,
-    required this.name,
-    required this.price,
-    required this.quantity,
+    this.productId,
+    this.name,
     this.description,
-    this.category,
+    this.categoryId,
+    this.price,
+    this.imgPath,
+    this.quantity = 1,
+    this.categoryName,
   });
 
-  double get totalPrice => price * quantity;
+  double get totalPrice => (price ?? 0) * quantity;
 
-  // Miktarı artır
-  void incrementQuantity() {
-    quantity++;
-  }
-
-  // Miktarı azalt
-  void decrementQuantity() {
-    if (quantity > 1) {
-      quantity--;
-    }
-  }
-
-  // JSON'dan model oluştur
   factory CartModel.fromJson(Map<String, dynamic> json) {
     return CartModel(
-      id: json['id'] ?? '',
-      imagePath: json['imagePath'] ?? 'assets/images/product.png',
-      name: json['name'] ?? 'Ürün',
-      price: (json['price'] ?? 0.0).toDouble(),
-      quantity: json['quantity'] ?? 1,
+      productId: json['productId'],
+      name: json['name'],
       description: json['description'],
-      category: json['category'],
+      categoryId: json['categoryId'],
+      price: (json['price'] ?? 0).toDouble(),
+      imgPath: json['imgPath'],
+      quantity: json['quantity'] ?? 1,
+      categoryName: json['categoryName'], // Kategori adını ekledik
     );
   }
 
-  // Model'den JSON oluştur
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'imagePath': imagePath,
+      'productId': productId,
       'name': name,
-      'price': price,
-      'quantity': quantity,
       'description': description,
-      'category': category,
+      'categoryId': categoryId,
+      'price': price,
+      'imgPath': imgPath,
+      'quantity': quantity,
+      'categoryName': categoryName, // Kategori adını ekledik
     };
   }
 
-  // Kopyalama metodu
   CartModel copyWith({
-    String? id,
-    String? imagePath,
+    String? productId,
     String? name,
-    double? price,
-    int? quantity,
     String? description,
-    String? category,
+    int? categoryId,
+    double? price,
+    String? imgPath,
+    int? quantity,
+    String? categoryName, // Kategori adını ekledik
   }) {
     return CartModel(
-      id: id ?? this.id,
-      imagePath: imagePath ?? this.imagePath,
+      productId: productId ?? this.productId,
       name: name ?? this.name,
-      price: price ?? this.price,
-      quantity: quantity ?? this.quantity,
       description: description ?? this.description,
-      category: category ?? this.category,
+      categoryId: categoryId ?? this.categoryId,
+      price: price ?? this.price,
+      imgPath: imgPath ?? this.imgPath,
+      quantity: quantity ?? this.quantity,
+      categoryName: categoryName ?? this.categoryName, // Kategori adını ekledik
+    );
+  }
+
+  /// ProductModel'den CartModel oluşturmak için
+  factory CartModel.fromProductModel(ProductModel product, {int quantity = 1}) {
+    return CartModel(
+      productId: product.productId,
+      name: product.name,
+      description: product.description,
+      categoryId: product.categoryId,
+      price: product.price,
+      imgPath: product.imgPath,
+      quantity: quantity,
+      categoryName: null, // Kategori adını başlangıçta null olarak ayarla
     );
   }
 }
