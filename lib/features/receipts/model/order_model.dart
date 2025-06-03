@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrderModel {
-  final String orderId;
+  final int orderId;
   final DateTime orderDate;
   final double totalAmount;
   final List<OrderItem> orderItems;
@@ -15,7 +15,7 @@ class OrderModel {
 
   factory OrderModel.fromMap(Map<String, dynamic> data) {
     return OrderModel(
-      orderId: data['orderId'] ?? '',
+      orderId: data['orderId'] ?? 0,
       orderDate: (data['orderDate'] as Timestamp).toDate(),
       totalAmount: (data['totalAmount'] ?? 0).toDouble(),
       orderItems: (data['orderItems'] as List<dynamic>).map((item) {
