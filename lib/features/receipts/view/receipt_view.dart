@@ -41,6 +41,9 @@ class ReceiptView extends StatelessWidget {
                         Text(
                             'Tarih: ${order.orderDate.toLocal().toString().split(".")[0]}'),
                         Text(
+                            'Ara Toplam: ₺${order.subtotalAmount.toStringAsFixed(2)}'),
+                        Text('KDV: ₺${order.taxAmount.toStringAsFixed(2)}'),
+                        Text(
                             'Toplam: ₺${order.totalAmount.toStringAsFixed(2)}'),
                         const SizedBox(height: 8),
                         ...order.orderItems.map((item) => Text(

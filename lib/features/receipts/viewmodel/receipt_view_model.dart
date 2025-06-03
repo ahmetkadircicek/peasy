@@ -40,4 +40,25 @@ class ReceiptViewModel extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
   }
+
+  // Ürün detaylarını siparişler için çekme
+  Future<void> getProductDetailsForOrders() async {
+    try {
+      for (var order in orders) {
+        List<OrderItem> updatedItems = [];
+        for (var item in order.orderItems) {
+          final productDoc =
+              await _firestore.collection('products').doc(item.productId).get();
+          if (productDoc.exists) {
+            final productData = productDoc.data()!;
+            updatedItems
+                .add(OrderItem.fromRawMap(item.toRawMap(), productData));
+          }
+        }
+        order = order.copyWith(orderItems: updatedItems);
+      }
+    } catch (e) {
+      print("Ürün detayları alınırken hata oluştu: $e");
+    }
+  }
 }
