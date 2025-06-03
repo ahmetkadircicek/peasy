@@ -117,15 +117,22 @@ class CartViewModel extends ChangeNotifier {
     }
   }
 
-  // Sepete ürün ekle (aynı ürün varsa tekrar eklenmez)
+  // Sepete ürün ekle (aynı ürün varsa quantity artır)
   void addItem(CartModel item) {
-    final exists =
-        _cartItems.any((element) => element.productId == item.productId);
-    if (!exists) {
+    final existingItemIndex = _cartItems.indexWhere(
+      (element) => element.productId == item.productId,
+    );
+
+    if (existingItemIndex != -1) {
+      // Aynı ürün varsa quantity artır
+      _cartItems[existingItemIndex].quantity += item.quantity;
+    } else {
+      // Yeni ürün ise listeye ekle
       _cartItems.add(item);
-      _saveCartItems();
-      notifyListeners();
     }
+
+    _saveCartItems();
+    notifyListeners();
   }
 
   // Sepetten ürün çıkar (id'ye göre)

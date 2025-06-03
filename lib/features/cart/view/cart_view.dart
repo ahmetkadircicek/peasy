@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:peasy/core/components/general_app_bar.dart';
 import 'package:peasy/core/components/general_background.dart';
 import 'package:peasy/core/components/general_button.dart';
-import 'package:peasy/core/components/general_text.dart';
-import 'package:peasy/core/constants/constants/general_constants.dart';
-import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
-import 'package:peasy/features/cart/model/cart_model.dart';
 import 'package:peasy/features/cart/viewmodel/cart_view_model.dart';
 import 'package:peasy/features/cart/widget/cart_widget.dart';
 import 'package:provider/provider.dart';
@@ -60,25 +56,11 @@ class CartView extends StatelessWidget {
   Widget _buildCartContent(BuildContext context, CartViewModel viewModel) {
     return Column(
       children: [
-        _buildCartContentBody(context, viewModel),
+        Expanded(
+          child: _buildCartItems(context, viewModel),
+        ),
         _buildBottomBar(context, viewModel),
       ],
-    );
-  }
-
-  Widget _buildCartContentBody(BuildContext context, CartViewModel viewModel) {
-    return Expanded(
-      child: SingleChildScrollView(
-        padding: PaddingConstants.pagePadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildCartSummary(context, viewModel),
-            const SizedBox(height: 16),
-            _buildCartItems(context, viewModel),
-          ],
-        ),
-      ),
     );
   }
 
@@ -88,256 +70,140 @@ class CartView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildEmptyCartIcon(context),
-          const SizedBox(height: 16),
-          _buildEmptyCartTitle(),
-          const SizedBox(height: 8),
-          _buildEmptyCartDescription(),
+          Icon(
+            Icons.shopping_cart_outlined,
+            size: 80,
+            color: context.onSurface.withOpacity(0.3),
+          ),
           const SizedBox(height: 24),
-          _buildEmptyCartButtons(context),
+          Text(
+            'Sepetiniz Boş',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: context.onSurface,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Alışverişe başlamak için ürün ekleyin',
+            style: TextStyle(
+              fontSize: 16,
+              color: context.onSurface.withOpacity(0.6),
+            ),
+          ),
+          const SizedBox(height: 32),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: GeneralButton(
+              text: 'Alışverişe Başla',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyCartIcon(BuildContext context) {
-    return Icon(
-      Icons.shopping_cart_outlined,
-      size: 80,
-      color: context.primary.withOpacity(0.5),
-    );
-  }
+  // Sepet Öğeleri - Swipe to Delete ile
+  Widget _buildCartItems(BuildContext context, CartViewModel viewModel) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: viewModel.cartItems.length,
+      itemBuilder: (context, index) {
+        final cartItem = viewModel.cartItems[index];
 
-  Widget _buildEmptyCartTitle() {
-    return const Headline(
-      text: 'Sepetiniz Boş',
-      isCentred: true,
-    );
-  }
-
-  Widget _buildEmptyCartDescription() {
-    return const Content(
-      text: 'Alışverişe başlamak için ürün ekleyin',
-      isCentred: true,
-    );
-  }
-
-  Widget _buildEmptyCartButtons(BuildContext context) {
-    return Padding(
-      padding: PaddingConstants.symmetricHorizontalLarge,
-      child: Column(
-        children: [
-          _buildShoppingButton(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildShoppingButton(BuildContext context) {
-    return GeneralButton(
-      text: 'Alışverişe Başla',
-      onPressed: () {
-        // Ana sayfaya yönlendir
-        Navigator.pop(context);
+        return Dismissible(
+          key: Key(cartItem.productId ?? index.toString()),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 20),
+            margin: const EdgeInsets.only(bottom: 8),
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.delete,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+          confirmDismiss: (direction) async {
+            return await _showDeleteConfirmDialog(
+                context, cartItem.name ?? 'Bu ürün');
+          },
+          onDismissed: (direction) {
+            viewModel.removeItem(cartItem.productId ?? '');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('${cartItem.name} sepetten kaldırıldı'),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                duration: const Duration(seconds: 2),
+                action: SnackBarAction(
+                  label: 'Geri Al',
+                  textColor: Colors.white,
+                  onPressed: () {
+                    viewModel.addItem(cartItem);
+                  },
+                ),
+              ),
+            );
+          },
+          child: CartWidget(cartItem: cartItem),
+        );
       },
     );
   }
 
-  // Sepet Özeti
-  Widget _buildCartSummary(BuildContext context, CartViewModel viewModel) {
-    return Container(
-      padding: PaddingConstants.allMedium,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: GeneralConstants.instance.borderRadiusMedium,
-      ),
-      child: Column(
-        children: [
-          _buildCartSummaryHeader(context, viewModel),
-          const Divider(),
-          _buildCartSummaryDetails(context, viewModel),
-          _buildExpandCollapseButton(context, viewModel),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCartSummaryHeader(
-      BuildContext context, CartViewModel viewModel) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Headline(text: 'Sepet Özeti'),
-        _buildClearCartButton(context, viewModel),
-      ],
-    );
-  }
-
-  Widget _buildClearCartButton(BuildContext context, CartViewModel viewModel) {
-    return TextButton.icon(
-      onPressed: () => _showClearCartDialog(context, viewModel),
-      icon: Icon(
-        Icons.delete_outline,
-        color: Theme.of(context).colorScheme.error,
-      ),
-      label: Text(
-        'Temizle',
-        style: TextStyle(color: Theme.of(context).colorScheme.error),
-      ),
-    );
-  }
-
-  Widget _buildCartSummaryDetails(
-      BuildContext context, CartViewModel viewModel) {
-    return Column(
-      children: [
-        _buildSummaryRow(context, 'Toplam Ürün', '${viewModel.itemCount} ürün'),
-        _buildSummaryRow(
-            context, 'Toplam Adet', '${viewModel.totalItems} adet'),
-        _buildSummaryRow(
-          context,
-          'Ara Toplam',
-          '₺${viewModel.subtotal.toStringAsFixed(2)}',
-          valueColor: context.primary,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildExpandCollapseButton(
-      BuildContext context, CartViewModel viewModel) {
-    return TextButton(
-      onPressed: viewModel.toggleExpanded,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            viewModel.isExpanded ? 'Daralt' : 'Detayları Göster',
-            style: TextStyle(color: context.primary),
+  // Silme Onay Dialog'u
+  Future<bool?> _showDeleteConfirmDialog(
+      BuildContext context, String productName) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Ürünü Kaldır'),
+          content: Text(
+              '$productName\'ı sepetten kaldırmak istediğinizden emin misiniz?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          Icon(
-            viewModel.isExpanded
-                ? Icons.keyboard_arrow_up
-                : Icons.keyboard_arrow_down,
-            color: context.primary,
-          ),
-        ],
-      ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                'İptal',
+                style: TextStyle(color: context.onSurface.withOpacity(0.6)),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text(
+                'Kaldır',
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  // Özet Satırı
-  Widget _buildSummaryRow(
-    BuildContext context,
-    String label,
-    String value, {
-    Color? valueColor,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Helper(text: label),
-          Helper(
-            text: value,
-            color: valueColor,
-            isBold: valueColor != null,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Sepet Öğeleri
-  Widget _buildCartItems(BuildContext context, CartViewModel viewModel) {
-    if (viewModel.isExpanded) {
-      return _buildExpandedCartItems(context, viewModel);
-    } else {
-      return _buildCollapsedCartItems(context, viewModel);
-    }
-  }
-
-  Widget _buildExpandedCartItems(
-      BuildContext context, CartViewModel viewModel) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: viewModel.groupedItems.entries.map((entry) {
-        return _buildCategorySection(context, entry.key, entry.value);
-      }).toList(),
-    );
-  }
-
-  Widget _buildCategorySection(
-      BuildContext context, String category, List<CartModel> items) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildCategoryHeader(category),
-        ...items.map((item) => CartWidget(cartItem: item)),
-        const SizedBox(height: 16),
-      ],
-    );
-  }
-
-  Widget _buildCategoryHeader(String category) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: SubHeadline(text: category),
-    );
-  }
-
-  Widget _buildCollapsedCartItems(
-      BuildContext context, CartViewModel viewModel) {
-    final displayItems = viewModel.cartItems.take(0).toList();
-    final remainingCount = viewModel.cartItems.length - displayItems.length;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ...displayItems.map((item) => CartWidget(cartItem: item)),
-        if (remainingCount > 0)
-          _buildRemainingItemsIndicator(context, viewModel, remainingCount),
-      ],
-    );
-  }
-
-  Widget _buildRemainingItemsIndicator(
-      BuildContext context, CartViewModel viewModel, int remainingCount) {
-    return Container(
-      margin: const EdgeInsets.only(top: 8),
-      padding: PaddingConstants.allMedium,
-      decoration: BoxDecoration(
-        color: context.primary.withOpacity(0.1),
-        borderRadius: GeneralConstants.instance.borderRadiusMedium,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.shopping_bag_outlined,
-            color: context.primary,
-          ),
-          const SizedBox(width: 8),
-          Helper(
-            text: 'Ve $remainingCount ürün daha...',
-            color: context.primary,
-          ),
-          const Spacer(),
-          TextButton(
-            onPressed: viewModel.toggleExpanded,
-            child: const Text('Tümünü Gör'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Alt Kısım: Toplam ve Ödeme Butonu
+  // Alt Kısım: Toplam ve Ödeme Butonu - Kargo Kaldırıldı
   Widget _buildBottomBar(BuildContext context, CartViewModel viewModel) {
     return Container(
-      padding: PaddingConstants.allMedium,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: context.surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -350,89 +216,85 @@ class CartView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildPriceDetails(context, viewModel),
-            const Divider(height: 16),
-            _buildTotalAndCheckoutRow(context, viewModel),
+            _buildOrderSummary(context, viewModel),
+            const SizedBox(height: 16),
+            _buildCheckoutButton(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildPriceDetails(BuildContext context, CartViewModel viewModel) {
-    return Column(
-      children: [
-        _buildSubtotalRow(context, viewModel),
-        _buildTaxRow(context, viewModel),
-        _buildShippingRow(context, viewModel),
-      ],
-    );
-  }
-
-  Widget _buildSubtotalRow(BuildContext context, CartViewModel viewModel) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Content(text: 'Ara Toplam:'),
-        Content(
-          text: '₺${viewModel.subtotal.toStringAsFixed(2)}',
-          color: context.primary,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTaxRow(BuildContext context, CartViewModel viewModel) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Helper(text: 'KDV (%18):'),
-        Helper(
-          text: '₺${viewModel.tax.toStringAsFixed(2)}',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildShippingRow(BuildContext context, CartViewModel viewModel) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Helper(
-          text: viewModel.shipping > 0
-              ? 'Kargo:'
-              : 'Kargo (100₺ üzeri ücretsiz):',
-        ),
-        Helper(
-          text: viewModel.shipping > 0
-              ? '₺${viewModel.shipping.toStringAsFixed(2)}'
-              : 'Ücretsiz',
-          color: viewModel.shipping > 0 ? null : Colors.green,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTotalAndCheckoutRow(
-      BuildContext context, CartViewModel viewModel) {
-    return Row(
-      children: [
-        _buildTotalPrice(context, viewModel),
-        _buildCheckoutButton(context),
-      ],
-    );
-  }
-
-  Widget _buildTotalPrice(BuildContext context, CartViewModel viewModel) {
-    return Expanded(
-      flex: 2,
+  Widget _buildOrderSummary(BuildContext context, CartViewModel viewModel) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.onSurface.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Label(text: 'Toplam Tutar'),
-          Headline(
-            text: '₺${viewModel.total.toStringAsFixed(2)}',
-            color: context.primary,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Ara Toplam',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: context.onSurface.withOpacity(0.7),
+                ),
+              ),
+              Text(
+                '₺${viewModel.subtotal.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: context.onSurface,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'KDV (%18)',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: context.onSurface.withOpacity(0.7),
+                ),
+              ),
+              Text(
+                '₺${viewModel.tax.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: context.onSurface.withOpacity(0.7),
+                ),
+              ),
+            ],
+          ),
+          const Divider(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Toplam',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: context.onSurface,
+                ),
+              ),
+              Text(
+                '₺${(viewModel.subtotal + viewModel.tax).toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: context.primary,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -440,11 +302,11 @@ class CartView extends StatelessWidget {
   }
 
   Widget _buildCheckoutButton(BuildContext context) {
-    return Expanded(
-      flex: 3,
+    return SizedBox(
+      width: double.infinity,
       child: GeneralButton(
         text: 'Ödemeye Geç',
-        icon: Icons.payment,
+        icon: Icons.arrow_forward_ios,
         onPressed: () {
           _handleCheckout(context);
         },
@@ -454,46 +316,14 @@ class CartView extends StatelessWidget {
 
   void _handleCheckout(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Ödeme işlemi başlatılıyor...'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
-  // Sepeti Temizle Dialog
-  void _showClearCartDialog(BuildContext context, CartViewModel viewModel) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sepeti Temizle'),
-        content: const Text(
-            'Sepetinizdeki tüm ürünleri kaldırmak istediğinizden emin misiniz?'),
-        actions: [
-          _buildCancelButton(context),
-          _buildConfirmClearButton(context, viewModel),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCancelButton(BuildContext context) {
-    return TextButton(
-      onPressed: () => Navigator.pop(context),
-      child: const Text('İptal'),
-    );
-  }
-
-  Widget _buildConfirmClearButton(
-      BuildContext context, CartViewModel viewModel) {
-    return TextButton(
-      onPressed: () {
-        Navigator.pop(context);
-        viewModel.clearCart();
-      },
-      child: Text(
-        'Temizle',
-        style: TextStyle(color: Theme.of(context).colorScheme.error),
+      SnackBar(
+        content: const Text('Ödeme işlemi başlatılıyor...'),
+        backgroundColor: context.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
