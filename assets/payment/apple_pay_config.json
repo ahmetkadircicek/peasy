@@ -1,0 +1,14 @@
+{
+  "provider": "apple_pay",
+  "data": {
+    "merchantIdentifier": "merchant.com.peasy.app",
+    "displayName": "Peasy",
+    "merchantCapabilities": ["3DS", "debit", "credit"],
+    "supportedNetworks": ["amex", "visa", "discover", "masterCard"],
+    "countryCode": "TR",
+    "currencyCode": "TRY",
+    "requiredBillingContactFields": ["emailAddress", "name"],
+    "requiredShippingContactFields": [],
+    "shippingMethods": []
+  }
+} 

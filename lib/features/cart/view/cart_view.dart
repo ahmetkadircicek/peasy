@@ -5,6 +5,8 @@ import 'package:peasy/core/components/general_button.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
 import 'package:peasy/features/cart/viewmodel/cart_view_model.dart';
 import 'package:peasy/features/cart/widget/cart_widget.dart';
+import 'package:peasy/features/payment/model/payment_model.dart';
+import 'package:peasy/features/payment/view/payment_view.dart';
 import 'package:provider/provider.dart';
 
 class CartView extends StatelessWidget {
@@ -315,15 +317,43 @@ class CartView extends StatelessWidget {
   }
 
   void _handleCheckout(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Ödeme işlemi başlatılıyor...'),
-        backgroundColor: context.primary,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+    final cartViewModel = Provider.of<CartViewModel>(context, listen: false);
+
+    if (cartViewModel.cartItems.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Sepetiniz boş. Önce ürün ekleyin.'),
+          backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          duration: const Duration(seconds: 2),
         ),
-        duration: const Duration(seconds: 2),
+      );
+      return;
+    }
+
+    // Convert CartModel items to OrderItem for payment
+    final orderItems = cartViewModel.cartItems.map((cartItem) {
+      return OrderItem(
+        id: cartItem.productId ?? '',
+        name: cartItem.name ?? 'Ürün',
+        price: cartItem.price ?? 0.0,
+        quantity: cartItem.quantity,
+        imageUrl: cartItem.imgPath,
+      );
+    }).toList();
+
+    // Navigate to PaymentView with cart items and cart clearing callback
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PaymentViewWrapper(
+          orderItems: orderItems,
+          onPaymentSuccess: () {
+            cartViewModel.clearCart();
+          },
+        ),
       ),
     );
   }

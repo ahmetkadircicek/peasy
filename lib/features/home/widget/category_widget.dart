@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:peasy/core/components/general_text.dart';
 import 'package:peasy/core/constants/constants/general_constants.dart';
@@ -68,9 +70,17 @@ class CategoryWidget extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: GeneralConstants.instance.borderRadiusMedium,
-        color: Colors.amber.withOpacity(0.4),
+        color: Color((Random().nextInt(0xFFFFFF) + 0xFF000000) &
+                0xFFFFFFFF) // Random sweet pastel color
+            .withOpacity(0.6), // Softer pastel tone
       ),
-      child: Image.asset(imagePath),
+      child: Padding(
+        padding: PaddingConstants.allMedium,
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: Image.network(imagePath, fit: BoxFit.contain),
+        ),
+      ),
     );
   }
 
