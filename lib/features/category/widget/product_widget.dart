@@ -27,7 +27,7 @@ class ProductWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // _buildProductImage(product.imagePath),
+            _buildProductImage(product.imgPath),
             const SizedBox(height: 8),
             _buildProductTitle(product.name ?? ''),
             const SizedBox(height: 4),
@@ -60,9 +60,12 @@ class ProductWidget extends StatelessWidget {
       child: imagePath != null
           ? ClipRRect(
               borderRadius: GeneralConstants.instance.borderRadiusMedium,
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
+              child: Padding(
+                padding: PaddingConstants.allSmall,
+                child: Image.network(
+                  imagePath,
+                  fit: BoxFit.contain,
+                ),
               ),
             )
           : const Icon(Icons.image_not_supported),

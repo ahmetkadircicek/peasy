@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:peasy/core/components/general_background.dart';
 import 'package:peasy/core/constants/constants/general_constants.dart';
 import 'package:peasy/core/constants/constants/padding_constants.dart';
 import 'package:peasy/core/extensions/context_extension.dart';
@@ -48,12 +49,7 @@ class HomeView extends StatelessWidget {
   Widget _buildBody(BuildContext context) {
     return Stack(
       children: [
-        Positioned.fill(
-          child: Image.asset(
-            'assets/images/background_vector.png',
-            fit: BoxFit.cover,
-          ),
-        ),
+        GeneralBackground(),
         CustomScrollView(
           physics: const ClampingScrollPhysics(),
           slivers: [
