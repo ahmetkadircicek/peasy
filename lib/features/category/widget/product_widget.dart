@@ -81,7 +81,7 @@ class ProductWidget extends StatelessWidget {
 
   Widget _buildProductPrice(double? price) {
     return Label(
-      text: price != null ? '\$${price.toStringAsFixed(2)}' : 'N/A',
+      text: price != null ? price.toStringAsFixed(2) : 'N/A',
     );
   }
 

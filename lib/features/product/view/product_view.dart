@@ -26,7 +26,7 @@ class ProductDetailView extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // _buildProductImage(product.imagePath),
+            _buildProductImage(product.imgPath),
             Padding(
               padding: PaddingConstants.pagePadding,
               child: Column(
@@ -82,11 +82,11 @@ class ProductDetailView extends StatelessWidget {
               bottomLeft: Radius.circular(24),
               bottomRight: Radius.circular(24),
             ),
-            child: Image.asset(
+            child: Image.network(
               imagePath,
               width: double.infinity,
               height: 240,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           )
         : Container(

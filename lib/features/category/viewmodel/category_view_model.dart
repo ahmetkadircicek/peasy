@@ -89,6 +89,10 @@ class CategoryViewModel extends ChangeNotifier {
     } catch (e) {
       _subcategories = [];
     }
+    for (var sub in _subcategories) {
+      print("Subcategory id: ${sub.id}, title: ${sub.title}");
+      _subcategoryNames[sub.id] = sub.title;
+    }
 
     _setLoadingSubcategories(false);
   }
@@ -116,13 +120,11 @@ class CategoryViewModel extends ChangeNotifier {
     _selectedSubcategoryId = subcategoryId;
 
     try {
-      // Eğer mevcut kategori ID'si varsa, o kategori ve alt kategori için ürünleri al
       if (_currentCategoryId != null) {
         _products = await _productService.getProducts(
           categoryId: _currentCategoryId,
           subcategoryId: subcategoryId,
         );
-        // Ürün yoksa ve alt kategori ID'si varsa, Firestore'dan doğrudan alt kategoriye göre filtreleyelim
         if (_products.isEmpty) {
           _products =
               await _productService.getProducts(subcategoryId: subcategoryId);
@@ -131,6 +133,8 @@ class CategoryViewModel extends ChangeNotifier {
         _products =
             await _productService.getProducts(subcategoryId: subcategoryId);
       }
+
+      _categorizeProducts();
     } catch (e) {
       _products = [];
       _categorizedProducts = {};

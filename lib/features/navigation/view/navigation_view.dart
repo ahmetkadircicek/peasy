@@ -8,6 +8,8 @@ import 'package:peasy/features/cart/view/cart_view.dart';
 import 'package:peasy/features/home/view/home_view.dart';
 import 'package:peasy/features/navigation/viewmodel/navigation_view_model.dart';
 import 'package:peasy/features/nfc/view/nfc_view.dart';
+import 'package:peasy/features/receipts/view/receipt_view.dart';
+import 'package:peasy/features/sales/view/sales_view.dart';
 import 'package:provider/provider.dart';
 
 class NavigationView extends StatefulWidget {
@@ -134,11 +136,11 @@ class NavigationViewState extends State<NavigationView> {
                 physics: const NeverScrollableScrollPhysics(),
                 controller: viewModel.pageController,
                 onPageChanged: viewModel.onPageChanged,
-                children: const [
+                children: [
                   HomeView(),
-                  Placeholder(color: Colors.blue),
+                  SalesView(),
                   NFCView(),
-                  Placeholder(color: Colors.purple),
+                  ReceiptView(),
                   CartView(),
                 ],
               ),
