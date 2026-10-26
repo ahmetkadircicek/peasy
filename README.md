@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="docs/screenshots/peasy_logo.webp" alt="Peasy Logo" width="100" />
+<img src="docs/cover.png" alt="Peasy" width="100%" />
 
 ### Frictionless in-store retail checkout powered by NFC and mobile payments.
 
